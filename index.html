@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Exam Portal</title>
+<style>
+:root{
+  --orange-main:#ff7b00;
+  --orange-dark:#e55e00;
+  --bg:#f4f6f9;
+  --white:#fff;
+  --text:#333;
+}
+
+body{
+  margin:0;
+  font-family:"Segoe UI",sans-serif,Kalinga;
+  background:var(--bg);
+  display:flex;
+  flex-direction:column;
+  min-height:100vh;
+  color:var(--text);
+}
+
+/* Main Wrapper */
+.main-wrapper{
+  display:flex;
+  flex:1;
+  transition: margin-left .3s ease;
+  margin-left:0; /* ✅ collapsed default */
+}
+
+/* Content */
+.content{
+  flex:1;
+  padding:0;
+  background:var(--white);
+  border-left:1px solid #ddd;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  height: calc(100vh - 50px);
+  overflow:hidden;
+}
+
+/* Footer */
+footer{
+  text-align:center;
+  background:var(--orange-dark);
+  color:#fff;
+  padding:10px;
+  font-size:0.9rem;
+  flex-shrink:0;
+  margin-left:0; /* ✅ collapsed default */
+  transition:margin-left .3s ease;
+}
+
+/* Sidebar */
+.sidebar{
+  width:150px;
+  background:linear-gradient(180deg,var(--orange-main),var(--orange-dark));
+  color:var(--white);
+  display:flex;
+  flex-direction:column;
+  padding:15px;
+  position:fixed;
+  top:0; bottom:0; left:0;
+  transition: transform .3s ease-in-out;
+  z-index:999;
+  overflow-y:auto;
+}
+.sidebar.collapsed{transform: translateX(-100%);}
+.menu{list-style:none;padding:0;margin:0;flex:1;}
+.menu li{margin-bottom:6px;}
+.menu a{display:flex;align-items:center;gap:10px;padding:10px 12px;text-decoration:none;color:var(--white);border-radius:6px;cursor:pointer;transition:background .2s;}
+.menu a:hover{background:rgba(255,255,255,0.15);}
+.submenu{list-style:none;padding-left:2px;margin:0;overflow:hidden;max-height:0;transition:max-height .3s ease;}
+.submenu a{font-size:0.9rem;background:rgba(255,255,255,0.08);display:block;padding:8px 12px;margin:4px 0;border-radius:8px;transition:background .3s;}
+.submenu a:hover{background:rgba(255,255,255,0.25);}
+.caret::after{content:"▼";font-size:0.7rem;margin-left:auto;transition:transform .3s;}
+.caret.open::after{transform:rotate(-90deg);}
+
+/* Toggle button */
+.toggle-btn{
+  position:fixed; top:0px; left:10px; z-index:2000;
+  font-size:1.5rem; cursor:pointer; border:none; background:none; color:var(--orange-dark);
+}
+.toggle-btn:hover{color:var(--orange-main);}
+
+/* Iframe */
+#examFrame {
+  flex:1;
+  width:100%;
+  height:100%;
+  border:none;
+  display:none;
+  background:#fff; /* ✅ always white */
+  margin:0;
+}
+
+/* Welcome Text Major */
+#welcomeTextBig {
+  text-align:center;
+  font-size:1.8rem;
+  font-weight:700;
+  color:var(--orange-dark);
+  margin:auto;
+  padding:200px 20px;
+  line-height:1.5;
+}
+
+/* Card style */
+.card{
+  background:#fff;
+  padding:20px;
+  border-radius:14px;
+  box-shadow:0 4px 15px rgba(0,0,0,0.08);
+  margin-bottom:20px;
+}
+.card label{display:flex;align-items:center;gap:8px;font-weight:600;margin-bottom:8px;color:var(--orange-dark);}
+.card input,.card select,.card textarea{
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  font-size:1rem;
+  outline:none;
+  margin-bottom:12px;
+}
+button.submit-btn{
+  background:var(--orange-main);
+  color:#fff;
+  border:none;
+  padding:10px 16px;
+  border-radius:8px;
+  font-size:1rem;
+  cursor:pointer;
+  transition:background .3s;
+}
+button.submit-btn:hover{background:var(--orange-dark);}
+
+/* Center alignment for About, Settings, Feedback */
+#aboutContent,
+#settingsForm,
+#feedbackForm {
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:justify;
+  font-size:1.8rem;
+  color:var(--orange-dark);
+  height:100%;
+  padding:28px;
+}
+</style>
+</head>
+<body>
+
+<!-- Toggle Button -->
+<button class="toggle-btn" id="toggleBtn">☰</button>
+
+<!-- Sidebar (collapsed default) -->
+<nav class="sidebar collapsed" id="sidebar">
+  <ul class="menu">
+    <li><a href="#home" id="homeMenu"><i>🏠</i>मूलम्</a></li>
+   <li><a class="caret"><i>📖</i>पुस्तकानि</a>
+  <ul class="submenu">
+    <li><a href="book/sktbook.pdf" target="examFrame">ସଂସ୍କୃତ ସାହିତ୍ୟ-ଦଶମ</a></li>
+    <li><a href="book/sktgr.pdf" target="examFrame">ବ୍ୟାକରଣ-ଦଶମ</a></li>
+   
+    <li><a href="book/7th.pdf" target="examFrame">ସଂସ୍କୃତ-ସପ୍ତମ</a></li>
+    <li><a href="book/6th.pdf" target="examFrame">ସଂସ୍କୃତ-ଷଷ୍ଠ</a></li>
+  </ul>
+</li>
+
+<li><a class="caret"><i>📘</i>पाठसारांशः</a>
+  <ul class="submenu">
+    <li><a href="notes/upama.html" target="examFrame">सुशिष्यः उपमन्युः</a></li>
+    <li><a href="notes/singha.html" target="examFrame">सिंहशृगालशिशुकथा</a></li>
+    <li><a href="notes/swami.html" target="examFrame">स्वामी विवेकानन्दः</a></li> 
+    <li><a href="notes/bhou.html" target="examFrame">भौतिकपर्यावरणम्</a></li>
+    <li><a href="notes/sishu.html" target="examFrame">शिशुवात्सल्यम्</a></li>
+    <li><a href="notes/sitayah.html" target="examFrame">सीतायाः वनगमनम्</a></li>
+    <li><a href="notes/judhis.html" target="examFrame">युधिष्ठिरयक्षसम्वादः</a></li>
+  </ul>
+</li>
+
+<li><a class="caret"><i>📝</i>अभ्यासः</a>
+  <ul class="submenu">
+    <li><a href="exam/1.html" target="examFrame">सुशिष्यः उपमन्युः </a></li>
+    <li><a href="exam/2.html" target="examFrame">सिंहशृगालशिशुकथा</a></li>
+    <li><a href="exam/3.html" target="examFrame">स्वामीविवेकानन्दः</a></li>
+    <li><a href="exam/4.html" target="examFrame">भौतिकपर्य्यावरणम्</a></li>
+    <li><a href="exam/P1.html" target="examFrame">सीतायाः वनगमनम्</a></li>
+    <li><a href="exam/P2.html" target="examFrame">युधिष्ठरयक्षसम्वादः </a></li>
+    <li><a href="exam/N1.html" target="examFrame">शिशुवात्सल्यम्</a></li>
+    <li><a href="exam/11.html" target="examFrame">प्रकृतिप्रत्ययः</a></li>
+    <li><a href="exam/Niti8th.html" target="examFrame">नीतिमञ्जरी अष्टमी</a></li>
+  </ul>
+</li>
+    <li><a href="#about" id="aboutMenu">🔎  बिषये</a></li>
+    <li><a href="#settings" id="settingsMenu">🎨  रङ्गः</a></li>
+    <li><a href="#feedback" id="feedbackMenu">🎤  प्रतिवेदनम्</a></li>
+  </ul>
+</nav>
+
+<!-- Main Content -->
+<div class="main-wrapper">
+  <div class="content">
+    <div id="homeContent">
+      <div id="welcomeTextBig">
+        🌺🌻🌼 स्वागतं सर्वेषाम् 🌼🌻🌺<br><br>
+
+ " तत् संस्कृतस्य जगति, यत्र ज्ञानं आनन्देन सरलेन आधुनिकरित्या प्रयोगरुपेण च लभ्यन्ते।"<br><br>	
+" संस्कृते संस्कृति ज्ञेया,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;संस्कृते सकला कला।<br>
+संस्कृते सकलं ज्ञानं, <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; संस्कृते किं न विद्यते।।"<br><br><br><br><br><br><br><br><br>
+      </div>
+    </div>
+    
+    <iframe id="examFrame" name="examFrame"></iframe>
+    
+    <!-- About -->
+    <div id="aboutContent" style="display:none;">
+      <h2 style="color:red;">किमर्थम् एतत् ? </h2>
+      <p>स्वागतम् सर्वेषां " तत् संस्कृतस्य जगति, यत्र ज्ञानं सौन्दर्यं च लभ्यन्ते।" अस्माकं संस्कृतस्य अभ्यास द्वारम् एकं नूतनं आधुनिकमञ्चम् अस्ति, यत्र विद्यार्थीनः संस्कृतभाषायाः अध्ययनं, अभ्यासं, प्रतियोगितापरीक्षायाः प्रस्तुतिं च कर्तुं शक्नुवन्ति। अस्य द्वरस्य मुख्यं लक्ष्यं संस्कृतस्य प्राचीनगौरवस्य पुनरुद्धारम्, आधुनिकप्रविधिभिः सह तस्य प्रयोगं तथा  सर्वेषां जनानां मध्ये आग्रहस्य जागरणं च अस्ति।
+
+अत्र ओडिशासर्वकारेण प्रचलित विद्यालयस्य व्याकरणं, साहित्यं च इत्यादयः विषयाः सुसङ्गृहिताः। प्रत्येकः पाठः सुललितरूपेण विवृत्तः अस्ति, यथा विद्यार्थी स्वयमेव अध्ययनं कृत्वा विषयगौरवं ज्ञातुं शक्नोति। अस्मिन् द्वारे प्रश्नानां प्रयोगात्मकव्यवहारः, तथा संस्कृतपाठस्य अभ्यासः अपि उपलभ्यते।
+
+अस्माकं अध्यापकाः अभिज्ञा विद्वत् वर्याः,  विद्यार्थिनां संशयान् समाधानं कुर्वन्ति, तान् संस्कृतसंवादे प्रेरयन्ति, तथा परीक्षासज्जतां वर्धयन्ति। अस्माकं अभिलाषा — “संस्कृतं सर्वस्य जीवनस्य एकं महत्वपुर्णं भागः भूयात्।”
+
+विद्यार्थिनः अत्र केवलं परीक्षार्थं न पठन्ति, अपि तु संस्कृतसंस्कृतेः तत्त्वं, भारतस्य चिरकालपरम्परायाः तेजः च अनुभवन्ति। अस्मिन् अन्तर्जालीयद्वारे संस्कृतं न केवलं विषयः अस्ति, अपितु जीवनदर्शनस्य मार्गः इति भावनया शिक्षणं प्रदीयते।
+
+अस्माकं उद्देश्यं — संस्कृतं सरलम्, आनन्ददायकं, प्रयोगशीलं च कर्तुम्। <br><br>
+</p>
+    </div>
+    
+    <!-- Settings -->
+    <div id="settingsForm" style="display:none;">
+      <h2>⚙️ Settings</h2>
+      <div class="card">
+        <label for="themeColor">🎨 Theme Color:</label>
+        <input type="color" id="themeColor" value="#ff7b00">
+      </div>
+    </div>
+    
+    <!-- Feedback -->
+    <div id="feedbackForm" style="display:none;">
+      <h2>💬 प्रतिवेदनम्</h2>
+      <div class="card">
+        <label for="name">👤 भवतः नाम</label>
+        <input type="text" id="name" placeholder="भवतः नाम लिखतु">
+        
+        <label for="email">📧 इ-मेल</label>
+        <input type="email" id="email" placeholder="भवतः इ-मेल लिखतु">
+        
+        <label for="message">📝 वार्ता</label>
+        <textarea id="message" rows="5" placeholder="भवतः वार्ता लिखतु ..."></textarea>
+        
+        <button class="submit-btn">प्रतिवेदनं प्रेषयतु</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>© All rights reserved Sanskrit Department.</footer>
+
+<script>
+// Sidebar toggle
+const toggleBtn=document.getElementById("toggleBtn");
+const sidebar=document.getElementById("sidebar");
+const mainWrapper=document.querySelector(".main-wrapper");
+const footer=document.querySelector("footer");
+
+// collapsed default
+mainWrapper.style.marginLeft="0";
+footer.style.marginLeft="0";
+
+function collapseSidebar(){
+  sidebar.classList.add("collapsed"); 
+  mainWrapper.style.marginLeft="0";
+  footer.style.marginLeft="0";
+}
+function expandSidebar(){
+  sidebar.classList.remove("collapsed"); 
+  mainWrapper.style.marginLeft="150px"; 
+  footer.style.marginLeft="150px";     
+}
+toggleBtn.addEventListener("click",()=>{sidebar.classList.contains("collapsed")?expandSidebar():collapseSidebar();});
+
+// Submenu toggle
+document.querySelectorAll(".caret").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    btn.classList.toggle("open");
+    let sub=btn.nextElementSibling;
+    sub.style.maxHeight=(sub.style.maxHeight && sub.style.maxHeight!=="0px")?"0":sub.scrollHeight+"px";
+  });
+});
+
+// Content switching
+const examFrame=document.getElementById("examFrame");
+const homeContent=document.getElementById("homeContent");
+const aboutContent=document.getElementById("aboutContent");
+const settingsForm=document.getElementById("settingsForm");
+const feedbackForm=document.getElementById("feedbackForm");
+
+function hideAll(){
+  examFrame.style.display="none";
+  homeContent.style.display="none";
+  aboutContent.style.display="none";
+  settingsForm.style.display="none";
+  feedbackForm.style.display="none";
+}
+
+document.getElementById("homeMenu").addEventListener("click",()=>{hideAll();homeContent.style.display="flex";});
+document.getElementById("aboutMenu").addEventListener("click",()=>{hideAll();aboutContent.style.display="flex";});
+document.getElementById("settingsMenu").addEventListener("click",()=>{hideAll();settingsForm.style.display="flex";});
+document.getElementById("feedbackMenu").addEventListener("click",()=>{hideAll();feedbackForm.style.display="flex";});
+
+document.querySelectorAll("a[target='examFrame']").forEach(link=>{
+  link.addEventListener("click",()=>{hideAll();examFrame.style.display="block";});
+});
+
+// Collapse sidebar when clicking outside
+document.addEventListener("click",e=>{
+  if(!sidebar.contains(e.target)&&!toggleBtn.contains(e.target)) collapseSidebar();
+});
+
+// Theme color changer (not stored)
+document.getElementById("themeColor").addEventListener("input",(e)=>{
+  const color=e.target.value;
+  document.documentElement.style.setProperty("--orange-main", color);
+  document.documentElement.style.setProperty("--orange-dark", shadeColor(color,-25));
+});
+function shadeColor(color,percent){
+  let f=parseInt(color.slice(1),16),t=percent<0?0:255,p=percent<0?percent*-1:percent;
+  let R=f>>16,G=f>>8&0x00FF,B=f&0x0000FF;
+  return "#"+(0x1000000+(Math.round((t-R)*p/100)+R)*0x10000+(Math.round((t-G)*p/100)+G)*0x100+(Math.round((t-B)*p/100)+B)).toString(16).slice(1);
+}
+</script>
+</body>
+</html>

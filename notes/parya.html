@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="sa">
+<head>
+  <meta charset="utf-8" />
+  <title>पर्य्यावरणम् (पठनम्)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root { --orange: #d35400; --soft: #fff3e0; --btn: #e67e22; }
+    body {
+      margin: 0;
+      font-family: "Noto Sans Devanagari", sans-serif;
+      background: orange;
+      color: #222;
+    }
+    header {
+      background: var(--orange);
+      color: #fff;
+      padding: 6px 8px;
+      text-align: center;
+    }
+    h1 {
+      margin: 0;
+      font-size: 22px;
+      animation: glow 6s infinite;
+    }
+    @keyframes glow {
+      0% { color: #fff; text-shadow: 0 0 8px crimson; }
+      25% { color: #ffeb3b; text-shadow: 0 0 10px green; }
+      50% { color: #00bcd4; text-shadow: 0 0 10px blue; }
+      75% { color: #e91e63; text-shadow: 0 0 10px purple; }
+      100% { color: #fff; text-shadow: 0 0 8px crimson; }
+    }
+    .wrap {
+      padding: 12px;
+      max-width: 800px auto;
+      margin: auto;
+    }
+   .wrap p {
+	text-indent:40px;
+     }
+    .passage-box {
+      background: var(--soft);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      overflow-y: auto;
+      max-height: 80vh;
+      font-size: 25px;
+      text-align: justify;
+      line-height: 1.6;
+    }
+    #congrats {
+      position: fixed;
+      left: 50%;
+      top: 20%;
+      transform: translateX(-50%) scale(0);
+      background: #fff;
+      padding: 18px 26px;
+      border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      z-index: 9999;
+      text-align: center;
+    }
+    #congrats.show {
+      animation: pop .55s forwards;
+    }
+    @keyframes pop {
+      0% { transform: translateX(-50%) scale(0); opacity: 0; }
+      60% { transform: translateX(-50%) scale(1.08); opacity: 1; }
+      100% { transform: translateX(-50%) scale(1); }
+    }
+    .floating-flower {
+      position: fixed;
+      top: -60px;
+      font-size: 30px;
+      pointer-events: none;
+      z-index: 9998;
+      animation: fall linear forwards;
+    }
+    @keyframes fall {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>जयतु भारतम् &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;।।🌼🌼 योऽनूचानः स नो महान् 🌼🌼।।&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;जयतु संस्कृतम्</h1>
+  </header>
+
+  <div class="wrap">
+    <div class="passage-box" onscroll="handleScroll(this)">
+       <p>
+ ପରି ଓ ଆବରଣ ଏହି ଦୁଇଟି ଶବ୍ଦର ଯୋଗରେ ପର୍ଯ୍ୟାବରଣ ଶବ୍ଦଟି ସୃଷ୍ଟି ହୋଇଛି । ପୃଥିବୀର ଚାରିପାଖରେ ଯେଉଁ ସୁକ୍ଷ୍ମ ଆବରଣ ରହିଛି ତାହା ହିଁ ପର୍ଯ୍ୟାବରଣ ଅଟେ । ସୂର୍ଯ୍ୟଙ୍କ ଚାରିପାଖରେ ଆବୃତ୍ତ ହୋଇ ଥିବା ଧୂଳିକଣିକା ମଣ୍ଡଳକୁ ପରିବେଶ କୁହାଯାଏ। ପରିବେଶ କହିଲେ,- “ସୂର୍ଯ୍ୟଙ୍କ ନିକଟରେ ଥିବା ପରିଧିକୁ ବୁଝାଏ”। ପରିତଃ ବିଷ୍ୟତେ ଅନେନ ଇତି ପରିବେଷଃ। ପୃଥିବୀ ହେଉଛି ସ୍ଥୂଳତମା, ଯେଉଁଠାରେ ଅନ୍ୟ ଭୂତ ଗୁଡିକ ଅନ୍ତର୍ଭୁକ୍ତ ହୋଇ ରହିଛନ୍ତି ।ଆକାଶରୁ ବାୟୁ, ବାୟୁରୁ ଅଗ୍ନି, ଅଗ୍ନିରୁ ଜଳ ତଥା ଜଳରୁ ପୃଥିବୀର ସୃଷ୍ଟି ହୋଇଥିବା କାରଣରୁ ଆକାଶ, ବାୟୁ, ଅଗ୍ନି, ଜଳ ଓ ପୃଥିବୀ ଏମାନେ ହେଲେ ପଞ୍ଚଭୂତ । ପର୍ଯ୍ୟାବରଣ(ପରିବେଶ) ମଧ୍ୟରେ ଏମାନଙ୍କର ଗ୍ରହଣ କରାଯାଏ । ଇକୋଲୋଜି, ଓଇକୋଲୋଜି ଏହି ଶବ୍ଦ ଦୁଇଟି ଓଇକୋସ୍ ଶବ୍ଦରୁ ନିଷ୍ପନ୍ନ ହୋଇଛି । ଯାହାର ଅର୍ଥ ହେଉଛି ଗୃହ ।
+</p>
+<h3>ପୃଥିବୀ :-</h3>
+<p>
+ପୃଥିବୀ ଆମର ମାତା । ପୃଥିବୀ ଜୀବଜଗତ, ବୃକ୍ଷଜଗତ ତଥା ଖଣିଜଦ୍ରବ୍ୟଗୁଡ଼ିକୁ ଧାରଣ କରିଥାଏ। ପୃଥିବୀର ସଂରକ୍ଷଣ ଦ୍ୱାରା ସମସ୍ତେ ସୁରକ୍ଷିତ ରହି ପାରିବେ । ଭୂମିର ପ୍ରଦୂଷଣ ଯୋଗୁଁ ରୋଗ ସୃଷ୍ଟି ହୁଏ । ବୃକ୍ଷମାନଙ୍କର ବୃଥା ଛେଦନ ଯୋଗୁଁ ତଥା ଅତ୍ୟଧିକ ରାସାୟନିକ କୀଟନାଶକ ବିଷ ପ୍ରୟୋଗଦ୍ୱାରା ଭୂମି ପ୍ରଦୂଷିତ ଓ ଶକ୍ତିହୀନ ହୋଇପଡ଼େ । ଭୂମିକୁ ପ୍ରକୃତି ବୋଲି କୁହାଯାଏ । ତେଣୁ, ପୃଥିବୀର ସଂରକ୍ଷଣ ଦ୍ୱାରା ସବୁ କିଛି ସଂରକ୍ଷିତ ହୋଇ ପାରିବ ।
+</p>
+<h3>ଜଳ :-</h3>
+<p>
+ଯେଉଁଠାରେ ଜୀବଜଗତର ଉତ୍ପତ୍ତି ଓ ବିଲୟ ହୋଇଥାଏ ତାହା ହିଁ ହେଉଛି ଜଳ। ଏଣୁ ଜଳକୁ ଆପଃ ବୋଲି କୁହାଯାଏ। ପୃଥିବୀରେ ଯେଉଁ ଜଳ ବ୍ୟାପୀ ରହିଛି, ତାହା ସୂର୍ଯ୍ୟରଶ୍ମିଦ୍ୱାରା ବାଷ୍ପୀଭବନ ପ୍ରକ୍ରିୟାରେ ମେଘରେ ସଞ୍ଚିତ ହୁଏ । ବର୍ଷାକାଳରେ ସେହି ଜଳ ବୃଷ୍ଟି ଆକାରରେ ଅନ୍ନ ଉତ୍ପାଦନ କରିଥାଏ।  ଏଥିରେ ଜୀବନ ଧାରଣ ଓ ବର୍ଦ୍ଧନର ସମସ୍ତ ତତ୍ତ୍ୱ ନିହିତ ଅଛି। କଳକାରଖାନା ଏବଂ ବର୍ଜ୍ୟବସ୍ତୁତ୍ୟାଗଦ୍ଵାରା ଜଳ ପ୍ରଦୂଷିତ ହୋଇ ରୋଗର କାରଣ ହୋଇଥାଏ। ନିର୍ମଳ ଜଳରେ ଜୀବନ ସୁରକ୍ଷିତ ହେବା ସହିତ ଦୀର୍ଘଜୀବୀ ତଥା ନୀରୋଗ ହୋଇଥାଏ।</p>
+<h3>ଅଗ୍ନି :-</h3>
+<p>
+ଅଗ୍ନି ତେଜ ରୂପ ଅଟେ । ଅଗ୍ନିର ଦାହକ ଶକ୍ତି ସମସ୍ତ ଅଶୁଦ୍ଧ ବସ୍ତୁକୁ ନାଶ କରିଥାଏ, ପର୍ଯ୍ୟାବରଣର ବିଶୁଦ୍ଧତାକୁ ରକ୍ଷାକରିଥାଏ ସୂର୍ଯ୍ୟ, ଯଜ୍ଞାଗ୍ନି, ଗାର୍ହପତ୍ୟାଗ୍ନି, ବନାଗ୍ନି, ବାଡବାଗ୍ନି ଏଭଳି ବିଭିନ୍ନ ରୂପରେ ଅଗ୍ନି ଶୁଦ୍ଧତାର କାରଣ ହୋଇଥାଏ । ବାୟୁମଣ୍ଡଳର ବିଷପ୍ରକ୍ରିୟାକୁ ଅଗ୍ନି ନାଶ କରିଥାଏ, ସଂସାରର ହିତ ସାଧନ ମଧ୍ୟ କରିଥାଏ ।
+</p>
+<h3>ବାୟୁ :-</h3>
+<p>
+ଜୀବନର ଆଧାର ହେଉଛି ବାୟୁ । ଯଜ୍ଞ ଅଗ୍ନିରେ ଘୃତଯୁକ୍ତ ଆହୁତି ବାୟୁମଣ୍ଡଳକୁ ଶୁଦ୍ଧ କରିଥାଏ । ବୃକ୍ଷ ବାୟୁମଣ୍ଡଳରୁ ଅଙ୍ଗାରକାମ୍ଳ ଗ୍ରହଣ କରିଥାଏ, ଏବଂ ପ୍ରାଣବାୟୁ ସ୍ୱରୂପ ଅମ୍ଳଜାନକୁ ତ୍ୟାଗ କରେ । ବୃକ୍ଷ ନିଜର ପତ୍ର ମାଧ୍ୟମରେ ଆଲୋକ ସଂଶ୍ଲେଷଣ ପ୍ରକ୍ରିୟା ଦ୍ୱାରା ଖାଦ୍ୟ ପ୍ରସ୍ତୁତ କରିଥାଏ । ବାୟୁଶୋଧନରେ ବୃକ୍ଷମାନଙ୍କର ଗୁରୁତ୍ୱପୂର୍ଣ୍ଣ ଭୂମିକା ରହିଛି । ବୃକ୍ଷ ଛେଦନ ଦ୍ୱାରା ବାୟୁପ୍ରଦୂଷଣ ବଢ଼ିଥାଏ । ବାୟୁମଣ୍ଡଳର ସୁରକ୍ଷା ଦ୍ୱାରା ଜୀବନ ସୁରକ୍ଷିତ ରହିବ ।
+</p>
+<h3>ଆକାଶ :-</h3>
+<p>
+ଆକାଶ ଆମର ପିତା ପୃଥିବୀ ମାତା । ଏହି ପଞ୍ଚମହାଭୂତଗୁଡ଼ିକ ସମନ୍ୱିତ ଭାବରେ ପ୍ରାଣୀମାନଙ୍କର ଜୀବନଧାରଣ ଓ ପୋଷଣ କରିଥାନ୍ତି । ଜଣଙ୍କର ବିପର୍ଯୟରେ ସୃଷ୍ଟିର ବିନାଶ ନିଶ୍ଚୟ । ବିଶ୍ୱର ସେହି ଆବରଣର ଓ ପର୍ଯ୍ୟାବରଣର ସୁରକ୍ଷା ଦ୍ୱାରା ଏହି ସୃଷ୍ଟି ନିଶ୍ଚୟ ରମଣୀୟା ହୋଇପାରିବ । ସବୁଠାରେ ଶାନ୍ତି ବିରାଜମାନ ହେଉ ତେଣୁ ପଞ୍ଚମହାଭୂତର ସୁରକ୍ଷା ନିମନ୍ତେ ଶାନ୍ତି ମନ୍ତ୍ର ପାଠ କରାଯିବା ଉଚିତ ।
+</p>
+      </p>
+    </div>
+  </div>
+
+  <div id="congrats">
+    <div style="font-size:26px">🎉 अभिनन्दनम् ! 🎉</div>
+    <div style="margin-top:8px;color:#2c3e50;font-weight:700">✅ पठनं सम्पन्नम्</div>
+    <div style="margin-top:8px;color:#2c3e50;font-weight:800;color:orange">' ☰ ' प्रति गच्छतु </div>
+  </div>
+
+  <script>
+    function handleScroll(el) {
+      if (el.scrollTop + el.clientHeight >= el.scrollHeight - 2) {
+        triggerCongrats();
+        el.onscroll = null;
+      }
+    }
+
+    function triggerCongrats() {
+      const popup = document.getElementById('congrats');
+      popup.classList.add('show');
+      setTimeout(() => popup.classList.remove('show'), 5000);
+
+      for (let i = 0; i < 12; i++) {
+        const f = document.createElement('div');
+        f.className = 'floating-flower';
+        const petals = ['🌸','🌺','🌼','💐','🌷'];
+        f.innerText = petals[Math.floor(Math.random() * petals.length)];
+        f.style.left = (5 + Math.random() * 90) + 'vw';
+        f.style.fontSize = (18 + Math.random() * 26) + 'px';
+        const dur = 3 + Math.random() * 2.5;
+                f.style.animationDuration = dur + 's';
+        f.style.animationDelay = (Math.random() * 0.3) + 's';
+        document.body.appendChild(f);
+        setTimeout(() => f.remove(), (dur + 0.4) * 1000 + 600);
+      }
+    }
+  </script>
+
+</body>
+</html>

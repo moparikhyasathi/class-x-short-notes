@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="sa">
+<head>
+  <meta charset="utf-8" />
+  <title>सिंहशृगालशिशुकथा (पठनम्)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root { --orange: #d35400; --soft: #fff3e0; --btn: #e67e22; }
+    body {
+      margin: 0;
+      font-family: "Noto Sans Devanagari", sans-serif;
+      background: orange;
+      color: #222;
+    }
+    header {
+      background: var(--orange);
+      color: #fff;
+      padding: 6px 8px;
+      text-align: center;
+    }
+    h1 {
+      margin: 0;
+      font-size: 22px;
+      animation: glow 6s infinite;
+    }
+    @keyframes glow {
+      0% { color: #fff; text-shadow: 0 0 8px crimson; }
+      25% { color: #ffeb3b; text-shadow: 0 0 10px green; }
+      50% { color: #00bcd4; text-shadow: 0 0 10px blue; }
+      75% { color: #e91e63; text-shadow: 0 0 10px purple; }
+      100% { color: #fff; text-shadow: 0 0 8px crimson; }
+    }
+    .wrap {
+      padding: 12px;
+      max-width: 800px auto;
+      margin: auto;
+    }
+   .wrap p {
+	text-indent:40px;
+     }
+    .passage-box {
+      background: var(--soft);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      overflow-y: auto;
+      max-height: 80vh;
+      font-size: 25px;
+      text-align: justify;
+      line-height: 1.6;
+    }
+    #congrats {
+      position: fixed;
+      left: 50%;
+      top: 20%;
+      transform: translateX(-50%) scale(0);
+      background: #fff;
+      padding: 18px 26px;
+      border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      z-index: 9999;
+      text-align: center;
+    }
+    #congrats.show {
+      animation: pop .55s forwards;
+    }
+    @keyframes pop {
+      0% { transform: translateX(-50%) scale(0); opacity: 0; }
+      60% { transform: translateX(-50%) scale(1.08); opacity: 1; }
+      100% { transform: translateX(-50%) scale(1); }
+    }
+    .floating-flower {
+      position: fixed;
+      top: -60px;
+      font-size: 30px;
+      pointer-events: none;
+      z-index: 9998;
+      animation: fall linear forwards;
+    }
+    @keyframes fall {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>जयतु भारतम् &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;।।🌼🌼 योऽनूचानः स नो महान् 🌼🌼।।&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;जयतु संस्कृतम्</h1>
+  </header>
+
+  <div class="wrap">
+    <div class="passage-box" onscroll="handleScroll(this)">
+       <p>
+
+   କୌଣସି ଏକ ଜଙ୍ଗଲରେ ସିଂହ ଏବଂ ସିଂହୀ ରହୁଥିଲେ। ତାଙ୍କର ଦୁଇଟି ପୁତ୍ର ଥିଲେ । ସିଂହ ଦିନସାରା ଖାଦ୍ୟ ଖୋଜି ଖୋଜି କିଛି ନ ପାଇ ଫେରୁଥିବା ସମୟରେ ଏକ ଶୃଗାଳ ଶିଶୁକୁ ପାଇଲା । ତାକୁ ସେ ନ ମାରି ଅତି ଯତ୍ନରେ ଦାନ୍ତ ମଧ୍ୟରେ ରଖି ସିଂହୀକୁ ଆଣି ଦେଲେ । ସିଂହୀ ମଧ୍ୟ ଛୋଟ ଶିଶୁକୁ ମାରିବା ପରି ଅକାର୍ଯ୍ୟ ଜୀବନ ଗଲେ ମଧ୍ୟ କରିବା ଉଚିତ୍ ନୁହଁ କହି ତାକୁ ନିଜର ପୁତ୍ର ପରି ପାଳିଲା, ସିଂହ ଦମ୍ପତିର ଦୁଇ ପୁତ୍ର ଏବଂ ଶୃଗାଳ ଶିଶୁ ସିଂହୀର ଖିର ପିଇ ବଡ ହେଲେ । ଥରେ ଜଙ୍ଗଲରେ ବୁଲୁଥିବା ସମୟରେ ଅରଣ୍ୟଗଜକୁ ଦେଖି ଭୟରେ ଶୃଗାଳଶିଶୁ ସେଠାରୁ ପଳାୟନ କଲା ।ବଡ ଭାଇର ଏପରି କାର୍ଯ୍ୟ ସିଂହପୁତ୍ରମାନଙ୍କୁ ଭଲ ଲାଗିଲା ନାହିଁ। ସିଂହପୁତ୍ର ଦ୍ୱୟ ସିଂହୀକୁ ସବୁ କଥା କହିବାରୁ ଶୃଗାଳ ଶିଶୁ କ୍ରୋଧିତ ହୋଇ ସେମାନଙ୍କୁ ଗାଳି କରି ମାରିଦେବ ବୋଲି କହିଲା । ସିଂହୀ କିନ୍ତୁ ପ୍ରକୃତ କଥା ବୁଝିପାରି ଶୃଗାଳଶିଶୁକୁ ଏକାନ୍ତରେ କହିଲେ -ଯେ ତୁ ଶୃଗାଳୀଶିଶୁ, ଏ ଦୁଇଜଣ ଭାଇ ସିଂହପୁତ୍ର ; ତୁ ସୁନ୍ଦର, ଶକ୍ତିଶାଳୀ, ବିଦ୍ୱାନ ଅଟୁ ; ମାତ୍ର ତୋର ଜନ୍ମ କୁଳ(ବଂଶ)ରେ କେହି ହାତୀ ମାରନ୍ତି ନାହିଁ । ତେଣୁ ସେମାନେ ତୋତେ ଚିହ୍ନିବା ଆଗରୁ ତୁ ଏଠାରୁ ଶୀଘ୍ର ପଳାୟନ କର ନହେଲେ ସେମାନେ ମାରିଦେବେ। ଶୃଗାଳଶିଶୁ ନିଜର ପ୍ରାଣରକ୍ଷା କରିବା ପାଇଁ ସେଠାରୁ ପଳାୟନ କରି ଧିରେ ଧିରେ ନିଜ ଜାତିରେ ଯାଇ ମିଶିଗଲା ।
+      </p>
+    </div>
+  </div>
+
+  <div id="congrats">
+    <div style="font-size:26px">🎉 अभिनन्दनम् ! 🎉</div>
+    <div style="margin-top:8px;color:#2c3e50;font-weight:700">✅ पठनं सम्पन्नम्</div>
+    <div style="margin-top:8px;color:#2c3e50;font-weight:800;color:orange">' ☰ ' प्रति गच्छतु </div>
+  </div>
+
+  <script>
+    function handleScroll(el) {
+      if (el.scrollTop + el.clientHeight >= el.scrollHeight - 2) {
+        triggerCongrats();
+        el.onscroll = null;
+      }
+    }
+
+    function triggerCongrats() {
+      const popup = document.getElementById('congrats');
+      popup.classList.add('show');
+      setTimeout(() => popup.classList.remove('show'), 5000);
+
+      for (let i = 0; i < 12; i++) {
+        const f = document.createElement('div');
+        f.className = 'floating-flower';
+        const petals = ['🌸','🌺','🌼','💐','🌷'];
+        f.innerText = petals[Math.floor(Math.random() * petals.length)];
+        f.style.left = (5 + Math.random() * 90) + 'vw';
+        f.style.fontSize = (18 + Math.random() * 26) + 'px';
+        const dur = 3 + Math.random() * 2.5;
+                f.style.animationDuration = dur + 's';
+        f.style.animationDelay = (Math.random() * 0.3) + 's';
+        document.body.appendChild(f);
+        setTimeout(() => f.remove(), (dur + 0.4) * 1000 + 600);
+      }
+    }
+  </script>
+
+</body>
+</html>
