@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="sa">
+<head>
+  <meta charset="utf-8" />
+  <title>सीतायाः वनगमनम् (ସଂସ୍କୃତ)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root{--orange:#d35400;--soft:#fff3e0;--btn:#e67e22}
+    body{margin:0;font-family:"Noto Sans Devanagari",sans-serif;background:orange;color:#222}
+    header{background:var(--orange);color:#fff;padding:6px 8px;text-align:center}
+    h1{margin:0;font-size:16px;animation:glow 6s infinite}
+    @keyframes glow{
+      0%{color:#fff;text-shadow:0 0 8px crimson}
+      25%{color:#ffeb3b;text-shadow:0 0 10px green}
+      50%{color:#00bcd4;text-shadow:0 0 10px blue}
+      75%{color:#e91e63;text-shadow:0 0 10px purple}
+      100%{color:#fff;text-shadow:0 0 8px crimson}
+    }
+   h2{margin:4px 0 0 0;font-size:18px;opacity:1;animation:fade 3s infinite}
+    @keyframes fade{0%,45%{opacity:0}50%,95%{opacity:1}100%{opacity:0}}
+    .wrap{padding:8px;max-width:750px;margin:0 auto}
+    .question{background:var(--soft);border-radius:12px;padding:12px;margin:14px auto;box-shadow:0 4px 10px rgba(0,0,0,.18);max-width:720px auto;text-align:center;display:none}
+    .qtitle{font-size:32px;font-weight:bold;margin-bottom:12px}
+    .options{display:flex;flex-direction:column;gap:8px;align-items:center; font-size:40px}
+    .opt{width:100%;max-width:500px;background:#f8c471;padding:6px;border-radius:12px;cursor:pointer;transition:transform .15s,background .15s;box-shadow:0 2px 6px rgba(0,0,0,.08);text-align:center}
+    .opt:hover{transform:scale(1.02);background:#f5b041}
+    .opt.selected{background:#d35400;color:#fff;font-weight:700}
+    .controls{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+    .controls button{background:var(--btn);color:#fff;border:none;padding:2px 10px;border-radius:10px;cursor:pointer}
+    .controls button:hover{filter:brightness(.95)}
+    .status{margin:10px auto;text-align:center;font-weight:700}
+    #results{display:none;margin-top:16px}
+    #answers{background:var(--soft);padding:16px;border-radius:10px}
+    .answer-block{border-bottom:1px solid #ddd;padding:10px 0}
+    .right{color:green;font-weight:700}.wrong{color:red;font-weight:700}
+    #congrats{position:fixed;left:50%;top:20%;transform:translateX(-50%) scale(0);background:#fff;padding:18px 26px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.25);z-index:9999;text-align:center}
+    #congrats.show{animation:pop .55s forwards}
+    @keyframes pop{0%{transform:translateX(-50%) scale(0);opacity:0}60%{transform:translateX(-50%) scale(1.08);opacity:1}100%{transform:translateX(-50%) scale(1)}}
+    .floating-flower{position:fixed;top:-60px;font-size:30px;pointer-events:none;z-index:9998;animation:fall linear forwards}
+    @keyframes fall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(360deg);opacity:0}}
+    .meta{font-size:13px;color:#333;margin-top:6px}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>जयतु भारतम् &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;।।🌼🌼 योऽनूचानः स नो महान्  🌼🌼 ।।&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;जयतु संस्कृतम्</h1>
+</header>
+
+  <div class="wrap">
+    <div id="quiz"></div>
+
+    <div class="controls" style="margin-top:16px">
+      <button onclick="prevQuestion()">पुर्वप्रश्नः</button>
+      <button onclick="nextQuestion()">परप्रश्नः</button>
+      <button onclick="markReview()">पुनर्द्रष्टव्यः</button>
+      <button onclick="finishExam()">समाप्तिः</button>
+    </div>
+
+    <div class="status" id="status">प्रयत्नाः : ० | अनुत्तरितः : ० | पुनर्द्रष्टव्यः : ०</div>
+
+    <div id="results">
+      <h3>भवतः उत्तराणि</h3>
+      <div id="answers"></div>
+    </div>
+  </div>
+
+  <div id="congrats">
+    <div style="font-size:26px">🎉 अभिनन्दनम् ! 🎉</div>
+    <div style="margin-top:8px;color:#2c3e50;font-weight:700">✅ यथार्थं उत्तरम्</div>
+  </div>
+
+  <script>
+  const questions = [
+  {"text": "कः आदिकविः ?", "options": ["व्यासः", "वाल्मिकिः", "कालिदासः", "भवभूतिः"], "answer": 1},
+  {"text": "रामायणी कथा किदृशी ?", "options": ["सुखश्राव्यम्", "शिक्षणीयम्", "रम्या", "सुखपाठ्यम्"], "answer": 2},
+  {"text": "रामः किदृशं स्ववेश्म प्राविवेश ?", "options": ["रमणीयम्", "मनोहर", "सुबिभुषितम्", "सुसज्जितम्"], "answer": 2},
+  {"text": "कथं रामः अबाङ्मुखः अभवत् ?", "options": ["दुःखेन", "लज्जया", "क्रोधेन", "ईर्षया"], "answer": 1},
+  {"text": "अथ रामः ............ अवाङ्मुखः स्ववेश्मं प्रविवेश ?", "options": ["क्रोधेन", "अपमानात्", "ह्रीया", "लज्जया"], "answer": 2},
+  {"text": "सीते तत्र भवान्......... मां बनं प्रब्राजयति।", "options": ["मातः", "तातः", "भ्रातः", "दशरथः"], "answer": 1},
+  {"text": "कः सत्यप्रतिज्ञः आसीत् ?", "options": ["रामचन्द्रः", "भरतः", "दशरथः", "लक्ष्मणः"], "answer": 2},
+  {"text": "दशरथः कस्यै वरौ दत्तवान् ?", "options": ["कौशल्यायै", "कैकेयै", "सुमित्रायै", "सीतायै"], "answer": 1},
+  {"text": "रामेण ........ बर्षाणि दण्डके बस्तब्यम् ?", "options": ["एकादश", "त्रयोदश", "द्वादश", "चतुर्दश"], "answer": 3},
+  {"text": "यौवराज्ये कः नियोजितः ?", "options": ["शत्रुघ्नः", "भरतः", "रामचन्द्रः", "लक्ष्मणः"], "answer": 1},
+  {"text": "चतुर्दश बर्षाणि रामेण........ बस्तब्यम् ।", "options": ["महारण्ये", "चन्दकारण्ये", "दण्डकारण्ये", "अभयारण्ये"], "answer": 2},
+  {"text": "कस्य विप्रियं न कर्तब्यम् इति रामः अकथयत् ?", "options": ["लक्ष्मणस्य", "भरतस्य", "दशरथस्य", "कैकेय्याः"], "answer": 1},
+  {"text": "का भामिनी ?", "options": ["सीता", "कैकेयी", "सुमित्रा", "कौशल्या"], "answer": 0},
+  {"text": "का वैदेही ?", "options": ["कैकेयी", "सुमित्रा", "कौशल्या", "सीता"], "answer": 3},
+  {"text": "का प्रियार्हा प्रियवादिनी ?", "options": ["सीता", "कौशल्या", "कैकेयी", "उर्मिला"], "answer": 0},
+  {"text": "का भर्तृभाग्यम् उपासते ?", "options": ["देवी", "सखी", "नारी", "सती"], "answer": 2},
+  {"text": "नारी कस्य भाग्यं प्राप्नोति ?", "options": ["स्वभाग्यम्", "पितुः भाग्यम्", "स्वामिनः भाग्यम्", "भर्तृभाग्यम्"], "answer": 3},
+  {"text": "कः नरश्रेष्ठः ?", "options": ["रामः", "लक्ष्मणः", "भरतः", "दशरथः"], "answer": 0},
+  {"text": "का रामेण सह वनं गन्तुम् ऐच्छत् ?", "options": ["सीता", "लक्ष्मणः", "भरतः", "दशरथः"], "answer": 0},
+  {"text": "सीता किदृशं वनं गमिष्यति ?", "options": ["पुरुषम्", "दुर्गम्", "सेवितम्", "नानामृगगणाकीर्णम्"], "answer": 3},
+  {"text": "कः पुरुषर्षभः ?", "options": ["सीता", "लक्ष्मणः", "भरतः", "रामः"], "answer": 3},
+  {"text": "कः धर्मवत्सलः?", "options": ["श्रीरामः", "भरतः", "शत्रुघ्नः", "लक्ष्मणः"], "answer": 0},
+  {"text": "सुप्यते पर्णशय्याषु, स्वयं भग्नासु ........।", "options": ["महीतले", "धरातले", "भूमौ", "भूतले"], "answer": 3},
+  {"text": "......... पर्णशय्यासु सुप्यते।", "options": ["वने", "ग्रामे", "गिरौ", "भूमौ"], "answer": 3},
+  {"text": "......... न हि वनं तव।", "options": ["प्रियं", "इष्टम्", "क्षेमम्", "शुभम्"], "answer": 2},
+  {"text": "त्वद्वियोगेन मे राम ... इह जीवितम्।", "options": ["वस्तव्यम्", "त्यक्तव्यम्", "कर्त्तव्यम्", "हन्तव्यम्"], "answer": 1},
+  {"text": "सीतां विना रामाय किं न रोचते ?", "options": ["राजसुखम्", "धनसुखम्", "स्वर्गसुखम्", "वनवाससुखम्"], "answer": 2},
+  {"text": "आरभस्व .... वनवासक्षमाः क्रियाः।", "options": ["सिते", "वैदेही", "जनकनन्दिनी", "शुभश्रोणि"], "answer": 3},
+ 
+  {"text": "प्रविवेशाथ", "options": ["प्रविवेश+अथ", "प्रविवेशः+अथ", "प्रविवेश+अथ", "प्रविवेस+अथ"], "answer": 0},
+  {"text": "भाग्यमुपासते", "options": ["भाग्यम्+उपासतेः", "भाग्यं+उपासत", "भाग्यम्+उपासते", "भाग्य+उपासते"], "answer": 2},
+  {"text": "यथैव", "options": ["यथौ+व", "यथा+एव", "यथा+इव", "यथा+एवः"], "answer": 1},
+  {"text": "प्रहर्षश्च", "options": ["प्रहर्ष+च", "प्रहर्ष+श्च", "प्रहर्ष+च", "प्रहर्षः+च"], "answer": 3},
+  {"text": "मन्दमिदम्", "options": ["मन्दम्+मिदम्", "मन्दम्+इदम्", "मन्दं+इद", "मन्दमी+दम्"], "answer": 1},
+  {"text": "नार्येका", "options": ["नारि+एका", "नार्य्य+एका", "नारी+एका", "नारी+एकाः"], "answer": 2},
+  {"text": "चाति", "options": ["च+अति", "चः+अति", "चा+ति", "त+अतिः"], "answer": 0},
+  {"text": "नेदानीम्", "options": ["ने+दानीम्", "न+इदानीम्", "न+एदानीम्", "ना+इदानीम्"], "answer": 1},
+  {"text": "स्वर्गोऽपि", "options": ["स्वर्गो+पि", "स्वर्गः+पि", "स्वर्ग+अपि", "स्वर्गः+अपि"], "answer": 3},
+  {"text": "प्रियार्हा", "options": ["प्रिया+र्हा", "प्रिय+अर्हा", "प्रिय+अर्हा", "प्रिया+अर्हा"], "answer": 3},
+  {"text": "भवान्+तातः", "options": ["भवांस्तातः", "भवास्तातः", "भवाँस्तातः", "भवान्-स्तातः"], "answer": 0},
+  {"text": "किम्+इदम्", "options": ["किमेदम्", "किमिदम्", "किदम्", "कीमिदं"], "answer": 1},
+  {"text": "त्वत्+ऋते", "options": ["तदृते", "त्वदृते", "त्वदृत", "त्वतृते"], "answer": 1},
+  {"text": "पुत्रः+तथा", "options": ["पुत्रतथा", "पुत्रस्तथा", "पुत्रस्तथाः", "पुत्रःस्तथा"], "answer": 1},
+  {"text": "मुखवर्णः+च", "options": ["मुखवर्ण्णश्र्चः", "मुखवर्ण्णच", "मुखवर्ण्णचः", "मुखवर्ण्णश्च"], "answer": 3},
+  {"text": "नृप+उद्यते", "options": ["नृपपद्यते", "नृपपद्यते", "नृपोद्यते", "नृपद्यतेः"], "answer": 2},
+  {"text": "वसतः+तान्", "options": ["वसततान्", "वसन्तान्", "वसस्तान्", "बसतस्तान्"], "answer": 2},
+  {"text": "महान्ति+अत्र", "options": ["महान्तित्र", "महान्त्यत्र", "महान्तित्र", "महान्त्यत्रः"], "answer": 1},
+
+  {"text": "शोक सन्तप्तम्", "options": ["शोकेन सन्तप्तः", "शोके सन्तप्तम्", "शोकं सन्तप्तम्", "शोकात् सन्तप्तम्"], "answer": 0},
+  {"text": "विवर्ण्णवदनम्", "options": ["कर्मधारय", "बहुव्रीहिः", "तृतीयी तत्पुरुषः", "उपपद तत्पुरुषः"], "answer": 0},
+  {"text": "न पूर्वः", "options": ["अपूर्वः", "न पूर्वः", "व पूर्वः", "नपूर्व"], "answer": 0},
+  {"text": "महावरौ", "options": ["महान् वरः तौ", "महान्तौ वरौ", "महतः वरौ", "महान्ति वर तौ"], "answer": 1},
+  {"text": "महावनम्", "options": ["बहुव्रीहि", "तृतीया तत् पूरुषः", "कर्मधारयः", "द्वितीया तत् पूरुषः"], "answer": 3},
+  {"text": "रघुनन्दनः", "options": ["रघो नन्दनः यस्य सः", "रघुणा नन्दनः", "रघुं नन्दनः", "रघोः नन्दनः"], "answer": 3},
+  {"text": "धर्मज्ञे", "options": ["उपपद तत् पुरुषः", "षष्ठी तत् पुरुषः", "बहुव्रिही", "सप्तमी तत् पुरुषः"], "answer": 2},
+  {"text": "धर्मचारिणी", "options": ["धर्म चरति या सा", "धर्मं चरति या", "धर्मस्य चारिणी", "धर्मं आचारिणी"], "answer": 1},
+  {"text": "त्वद् वियोगेन", "options": ["तद् वियोगः तेन", "तेभ्यः वियोगः तेन", "त्वया वियोगः तेन", "तव वियोगः तेन"], "answer": 3},
+  {"text": "विसञ्ज्ञाम्", "options": ["विगता संज्ञा", "विगता संज्ञा यस्याः सा ताम्", "नास्ति संज्ञा यस्या तां", "विगतां संज्ञां"], "answer": 1},
+  {"text": "नरवरोत्तम", "options": ["षष्ठी तत्", "सप्तमी तत्", "कर्मधारयः", "बहुव्रीहिः"], "answer": 1}  
+]
+
+// -------------------------
+    // Utility: Fisher-Yates shuffle
+    // -------------------------
+    function shuffleArray(arr){
+      for(let i=arr.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [arr[i],arr[j]]=[arr[j],arr[i]];
+      }
+      return arr;
+    }
+
+    // Shuffle questions order (no repeats)
+    shuffleArray(questions);
+
+    // For each question: shuffle options and update answer index
+    questions.forEach(q=>{
+      const correct = q.options[q.answer];
+      shuffleArray(q.options);
+      q.answer = q.options.indexOf(correct);
+    });
+
+
+  // Sanskrit digit converter
+  function toSanskritNum(num){
+    const d=['०','१','२','३','४','५','६','७','८','९'];
+    return String(num).split('').map(x=>d[x]).join('');
+  }
+
+  // Render quiz
+  const quizContainer=document.getElementById('quiz');
+  questions.forEach((q,i)=>{
+    const d=document.createElement('div');
+    d.className='question';
+    d.id='q'+(i+1);
+    const qNum=toSanskritNum(i+1);
+    const total=toSanskritNum(questions.length);
+    d.innerHTML=`
+      <div class="qtitle"><strong>प्रश्नः ${qNum}.</strong> ${q.text}</div>
+      <div class="options">
+        ${q.options.map((opt,ji)=>`<div class="opt" data-index="${ji}" onclick="selectOption(${i+1}, this)">${opt}</div>`).join('')}
+      </div>
+      <div class="meta">प्रश्नः ${qNum} / ${total}</div>
+    `;
+    quizContainer.appendChild(d);
+  });
+
+  // State
+  let current=1, answersMap={}, marked=0;
+
+  function showQuestion(n){
+    document.querySelectorAll('.question').forEach(el=>el.style.display='none');
+    const el=document.getElementById('q'+n);
+    if(el) el.style.display='block';
+    current=n;
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function updateStatus(){
+    const attempted=Object.keys(answersMap).length;
+    const notAttempted=questions.length-attempted;
+    document.getElementById('status').innerText=
+      `प्रयत्नाः : ${toSanskritNum(attempted)} | अनुत्तरितः : ${toSanskritNum(notAttempted)} | पुनर्द्रष्टव्यः : ${toSanskritNum(marked)}`;
+  }
+
+  function selectOption(qNum,el){
+    document.querySelectorAll(`#q${qNum} .opt`).forEach(o=>o.classList.remove('selected'));
+    el.classList.add('selected');
+    answersMap[qNum]=el.innerText.trim();
+    if(el.innerText.trim()===questions[qNum-1].options[questions[qNum-1].answer]){
+      triggerCongrats();
+    }
+    updateStatus();
+  }
+
+  function prevQuestion(){if(current>1)showQuestion(current-1);}
+  function nextQuestion(){if(current<questions.length)showQuestion(current+1);}
+  function markReview(){marked++;updateStatus();}
+
+  // congrats popup + floating flowers (one-time small shower each correct selection)
+    function triggerCongrats(){
+      const popup = document.getElementById('congrats');
+      popup.classList.add('show');
+      setTimeout(()=>popup.classList.remove('show'),1800);
+
+      // spawn flowers
+      for(let i=0;i<12;i++){
+        const f = document.createElement('div');
+        f.className = 'floating-flower';
+        const petals = ['🌸','🌺','🌼','💐','🌷'];
+        f.innerText = petals[Math.floor(Math.random()*petals.length)];
+        f.style.left = (5 + Math.random()*90) + 'vw';
+        f.style.fontSize = (18 + Math.random()*26) + 'px';
+        // random duration and delay
+        const dur = 3 + Math.random()*2.5;
+        f.style.animationDuration = dur + 's';
+        f.style.animationDelay = (Math.random()*0.3) + 's';
+        document.body.appendChild(f);
+        setTimeout(()=>f.remove(), (dur+0.4)*1000 + 600);
+      }
+    }
+
+  function finishExam(){
+    let correctCount=0,html='';
+    for(let i=0;i<questions.length;i++){
+      const qNum=i+1,q=questions[i],correct=q.options[q.answer];
+      const given=answersMap[qNum]||null;
+      const ok=given!==null && given===correct;
+      if(ok)correctCount++;
+      html+=`<div class="answer-block">
+        <div><strong>प्रश्नः ${toSanskritNum(qNum)}.</strong> ${q.text}</div>
+        <p>दत्त उत्तरः: <span class="${ok?'right':'wrong'}">${given||'न दत्त'}</span></p>
+        <p>समीचीन उत्तरः: <strong>${correct}</strong></p>
+      </div>`;
+    }
+    const summary=`<div class="summary">योगफलम् : ${toSanskritNum(correctCount)} / ${toSanskritNum(questions.length)}</div>`;
+    document.getElementById('answers').innerHTML=summary+html;
+    document.getElementById('quiz').style.display='none';
+    document.getElementById('results').style.display='block';
+  }
+
+  showQuestion(1);
+  updateStatus();
+  </script>
+</body>
+</html>

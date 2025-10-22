@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="sa">
+<head>
+  <meta charset="utf-8" />
+  <title>bse odisha prakruti prataya class x viii</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root{--orange:#d35400;--soft:#fff3e0;--btn:#e67e22}
+    body{margin:0;font-family:"Noto Sans Devanagari",sans-serif;background:orange;color:#222}
+    header{background:var(--orange);color:#fff;padding:6px 8px;text-align:center}
+    h1{margin:0;font-size:16px;animation:glow 6s infinite}
+    @keyframes glow{
+      0%{color:#fff;text-shadow:0 0 8px crimson}
+      25%{color:#ffeb3b;text-shadow:0 0 10px green}
+      50%{color:#00bcd4;text-shadow:0 0 10px blue}
+      75%{color:#e91e63;text-shadow:0 0 10px purple}
+      100%{color:#fff;text-shadow:0 0 8px crimson}
+    }
+   h2{margin:4px 0 0 0;font-size:18px;opacity:1;animation:fade 3s infinite}
+    @keyframes fade{0%,45%{opacity:0}50%,95%{opacity:1}100%{opacity:0}}
+    .wrap{padding:8px;max-width:750px;margin:0 auto}
+    .question{background:var(--soft);border-radius:12px;padding:12px;margin:14px auto;box-shadow:0 4px 10px rgba(0,0,0,.18);max-width:720px auto;text-align:center;display:none}
+    .qtitle{font-size:32px;font-weight:bold;margin-bottom:12px}
+    .options{display:flex;flex-direction:column;gap:8px;align-items:center; font-size:40px}
+    .opt{width:100%;max-width:500px;background:#f8c471;padding:6px;border-radius:12px;cursor:pointer;transition:transform .15s,background .15s;box-shadow:0 2px 6px rgba(0,0,0,.08);text-align:center}
+    .opt:hover{transform:scale(1.02);background:#f5b041}
+    .opt.selected{background:#d35400;color:#fff;font-weight:700}
+    .controls{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+    .controls button{background:var(--btn);color:#fff;border:none;padding:2px 10px;border-radius:10px;cursor:pointer}
+    .controls button:hover{filter:brightness(.95)}
+    .status{margin:10px auto;text-align:center;font-weight:700}
+    #results{display:none;margin-top:16px}
+    #answers{background:var(--soft);padding:16px;border-radius:10px}
+    .answer-block{border-bottom:1px solid #ddd;padding:10px 0}
+    .right{color:green;font-weight:700}.wrong{color:red;font-weight:700}
+    #congrats{position:fixed;left:50%;top:20%;transform:translateX(-50%) scale(0);background:#fff;padding:18px 26px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.25);z-index:9999;text-align:center}
+    #congrats.show{animation:pop .55s forwards}
+    @keyframes pop{0%{transform:translateX(-50%) scale(0);opacity:0}60%{transform:translateX(-50%) scale(1.08);opacity:1}100%{transform:translateX(-50%) scale(1)}}
+    .floating-flower{position:fixed;top:-60px;font-size:30px;pointer-events:none;z-index:9998;animation:fall linear forwards}
+    @keyframes fall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(360deg);opacity:0}}
+    .meta{font-size:13px;color:#333;margin-top:6px}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>जयतु भारतम् &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;।।🌼🌼 योऽनूचानः स नो महान्  🌼🌼 ।।&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;जयतु संस्कृतम्</h1>
+</header>
+
+  <div class="wrap">
+    <div id="quiz"></div>
+
+    <div class="controls" style="margin-top:16px">
+      <button onclick="prevQuestion()">पुर्वप्रश्नः</button>
+      <button onclick="nextQuestion()">परप्रश्नः</button>
+      <button onclick="markReview()">पुनर्द्रष्टव्यः</button>
+      <button onclick="finishExam()">समाप्तिः</button>
+    </div>
+
+    <div class="status" id="status">प्रयत्नाः : ० | अनुत्तरितः : ० | पुनर्द्रष्टव्यः : ०</div>
+
+    <div id="results">
+      <h3>भवतः उत्तराणि</h3>
+      <div id="answers"></div>
+    </div>
+  </div>
+
+  <div id="congrats">
+    <div style="font-size:26px">🎉 अभिनन्दनम् ! 🎉</div>
+    <div style="margin-top:8px;color:#2c3e50;font-weight:700">✅ यथार्थं उत्तरम्</div>
+  </div>
+
+  <script>
+  const questions = [
+  {"text": "लभमानः = लभ् + ____", "options": ["शतृ", "शानच्", "क्त", "ल्यप्"], "answer": 1},
+  {"text": "वृत्तिं = ____ + क्तिन्", "options": ["वुध्", "वृत्", "वृ", "वृत्त्"], "answer": 1},
+  {"text": "कुपितः = ____ + क्तः", "options": ["कूप्", "कु", "कुक्", "कुम्"], "answer": 0},
+  {"text": "उपस्थाय = उप + स्था + ___", "options": ["ल्यप्", "शतृ", "शानच्", "क्त"], "answer": 0},
+  {"text": "लव्धः = ____ + क्त", "options": ["लभ्", "लुभ्", "लूभ्", "लव्"], "answer": 0},
+  {"text": "शृत्वा = ____ + क्त्वाच्", "options": ["शृ", "शतृ", "श्रु", "त्वा"], "answer": 0},
+  {"text": "आगत्य = आ + ____ + ल्यप्", "options": ["गत्य", "शतृ", "यत्", "गम्"], "answer": 3},
+  {"text": "गच्छन् = गम् + ____", "options": ["शतृ", "शतु", "अन्", "शत्"], "answer": 0},
+  {"text": "भुत्वा = भु + ____", "options": ["क्त", "क्तः", "क्त्वाच्", "क्वच्"], "answer": 2},
+  {"text": "भक्ति = भज् + ____", "options": ["क्तिन्", "क्त्वाच्", "क्त", "किन"], "answer": 0},
+
+  {"text": "भ्रमतः = भ्रम् + _____", "options": ["क्तवतु", "क्त", "क्त्वा", "नीय"], "answer": 1},
+  {"text": "प्राप्तः = प्र + आप् + _____", "options": ["शतृ", "क्त", "ल्युट्", "क्तिन्"], "answer": 1},
+  {"text": "कृत्वा = _____ + क्त्वा", "options": ["कृ", "कृत्", "कृङ्", "कृष्"], "answer": 0},
+  {"text": "अभिहितम् = अभि + _____ + क्त", "options": ["हा", "हि", "धा", "दा"], "answer": 2},
+  {"text": "आनीतम् = आ + नी + _____", "options": ["क्त", "ल्यप्", "क्तवतु", "तम्"], "answer": 0},
+  {"text": "भोजनम् = _____ + ल्युट्", "options": ["भुज्", "भोज्", "भृज्", "भूज्"], "answer": 0},
+
+  {"text": "आच्छन्नः = आ + छद् + ____", "options": ["क्त", "क्तवतु", "शतृ", "न:"], "answer": 0},
+  {"text": "निधातुम् = नि + ____ + तुमुन्", "options": ["हा", "धा", "हु", "धृ"], "answer": 1},
+  {"text": "प्रतिष्ठितः = प्रति + ____ + क्त", "options": ["स्था", "ष्ठा", "था", "ष्ठि"], "answer": 0},
+  {"text": "कृत्वा = कृ + ____", "options": ["ल्यप्", "क्त्वा", "शतृ", "त्वाच"], "answer": 1},
+  {"text": "आनेतुं = आ + नी + ____", "options": ["क्तवतु", "तुमुन्", "शतृ", "तुं"], "answer": 1},
+  {"text": "विषयः = वि + सि + ____", "options": ["घञ्", "अल्", "क्त", "अच्"], "answer": 0},
+  {"text": "प्रसिद्धः = प्र + सिध् + ____", "options": ["क्त", "क्तः", "क्तिन्", "द्धः"], "answer": 0},
+  {"text": "पृष्टवान् = प्रच्छ + ____", "options": ["क्तवतु", "क्तिन्", "क्त", "वान्"], "answer": 0},
+  
+  {"text": "स्वीकृतवान् = स्वी + कृ + ____", "options": ["क्त", "क्तिन्", "क्तवतु", "वान्"], "answer": 2},
+  {"text": "संयोगः = सम् + युज् + ____", "options": ["घञ", "क्त", "शतृ", "अच्"], "answer": 0},
+  {"text": "जिज्ञासुः = ज्ञा + सन् + ____", "options": ["उ", "ऊ", "क्तः", "सुः"], "answer": 3},
+  {"text": "जातः = जन् + ____", "options": ["क्त", "तः", "क्तिन्", "क्तः"], "answer": 3},
+
+  {"text": "सुविभूषितम् = सु + वि + .... + क्त", "options": ["भूष्", "भृश्", "भृञ्", "भूस्"], "answer": 0},
+  {"text": "समुत्पत्य = सम् + उत् + पत् + ......", "options": ["क्त", "घञ्", "ल्यप्", "क्यप्"], "answer": 2},
+  {"text": "दृष्ट्वा = दृश् + ....", "options": ["क्त्वाच्", "क्त", "तव्य", "ष्ट्वा"], "answer": 0},
+  {"text": "अभिषेकः = अभि + ...... + घञ्", "options": ["सिच्", "शिष्", "शिध्", "षेक्"], "answer": 0},
+  {"text": "वस्तव्यम् = वस् + ......", "options": ["शतृ", "क्तवतु", "तव्य", "व्यम्"], "answer": 2},
+  {"text": "नेतुम् = ........ + तुमुन्", "options": ["नी", "नृ", "नद्", "ने"], "answer": 0},
+  {"text": "वसतः = वस् + .....", "options": ["क्त", "शतृ", "क्तवतु", "तः"], "answer": 3},
+  {"text": "वियोगेन = वि + .... + घञ्", "options": ["यु", "युग्", "युज्", "योज्"], "answer": 2},
+  {"text": "त्यक्तव्यम् = ......... + तव्य", "options": ["त्यज्", "तेज", "तेप्", "त्वज्"], "answer": 0},
+  {"text": "आदिष्टा = आ + दिश् + .......", "options": ["घञ्", "क्त", "क्तवतु", "ष्ट"], "answer": 3},
+  {"text": "उक्त्वा = वच् + ......", "options": ["क्त", "क्तः", "क्ता", "ता"], "answer": 0},
+  {"text": "प्रहर्षः = प्र + .... + घञ्", "options": ["हर्ष", "हर्स", "हृष्", "हर्श"], "answer": 0},
+  {"text": "सोढुम् = ...... + तुमुन्", "options": ["सृ", "वह्", "सह्", "सह"], "answer": 2},
+  {"text": "प्रखिन्नम् = प्र + ..... + क्त", "options": ["खिद्", "खच्", "खण्ड", "श्विन्"], "answer": 0},
+  {"text": "वेपमाना = वेप् + ....", "options": ["माना", "शानच्", "शतृ", "मान"], "answer": 1},
+  {"text": "उक्त्वा = ..... + क्त्वाच्", "options": ["वच्", "उच्", "उक्", "ऊच्"], "answer": 0},
+  {"text": "विमृशन् = वि + .... + शतृ", "options": ["मृश्", "मृद्", "मृष्", "मृस्"], "answer": 0},
+  {"text": "श्रृत्वा = ...... + क्त्वा", "options": ["स्मृ", "श्रृ", "स्रु", "शृ"], "answer": 3},
+  {"text": "गन्तुम् = गम् + ......", "options": ["शतृ", "शानच्", "तुमुन्", "न्तुम्"], "answer": 2},
+  {"text": "मर्षणम् = ...... + ल्युट्", "options": ["मर्ष", "मृष्", "मृश्", "मर्स"], "answer": 0},
+
+  {"text": "दमनम् = दम् + ____", "options": ["नीय", "ल्युट्", "शतृ", "नम्"], "answer": 1},
+  {"text": "उदाहृतम् = उद् + आ + ____ + क्त", "options": ["हु", "ह्र", "हि", "हृ"], "answer": 3},
+  {"text": "पिधानम् = अपि + धा + ____", "options": ["शतृ", "ल्युट्", "नीय", "नम्"], "answer": 1},
+  {"text": "प्रवसतः = प्र + ____ + शतृ", "options": ["वश्", "वस्", "वर्ष", "वस"], "answer": 3},
+  {"text": "सम्बोधः = सम् + बुध् + ____", "options": ["क्त", "क्तिन्", "घञ्", "अच्"], "answer": 2},
+  {"text": "जीवितुम् = जीव् + ____", "options": ["तुमुन्", "शतृ", "क्त", "तुम्"], "answer": 0},
+  {"text": "प्रमाणम् = प्र + मा + ____", "options": ["ल्युट्", "शतृ", "क्तवतु", "णम्"], "answer": 0},
+  {"text": "ज्ञानम् = ज्ञा + ____", "options": ["अनम्", "ल्युट्", "शतृ", "नम्"], "answer": 1},
+  {"text": "बुद्धिः = ____ + क्तिन्", "options": ["बुधि", "बुध्", "वोध", "वोध्"], "answer": 1},
+  {"text": "पृष्टवान् = ____ + क्तवतु", "options": ["पुच्छ", "प्रछ", "प्रच्छ", "पृच्छ"], "answer": 3},
+  {"text": "प्रदत्तवान् = प्र + ____ + क्तवतु", "options": ["दत्", "दत्त", "दा", "द"], "answer": 2},
+  {"text": "मरिष्यतः = मृ + ____", "options": ["शतृ", "शत्रु", "स्यतृ", "स्यमातृ"], "answer": 0},
+
+    {"text": "भीतः = भी + _____", "options": ["क्त", "शतृ", "क्तवतु", "तः"], "answer": 0},
+    {"text": "विलोक्य = वि + _____ + ल्यप्", "options": ["लाच्", "लोक्", "लोप्", "लोक"], "answer": 1},
+    {"text": "स्थानम् = स्था + _____", "options": ["क्त", "ल्युट्", "नीय", "नम्"], "answer": 1},
+    {"text": "प्राप्तव्यम् = प्र + आप् + _____", "options": ["क्त", "क्तवतु", "तव्य", "व्यम्"], "answer": 2},
+    {"text": "प्रसूता = प्र + _____ + क्त + टाप्", "options": ["सृज्", "सू", "सृ", "सो"], "answer": 1},
+    {"text": "परिभ्रष्टम् = परि + _____ + क्त", "options": ["भ्रनश्", "भ्रज्", "भ्रंस", "भ्रष्ट्"], "answer": 3},
+    {"text": "गृहीतम् = _____ + क्त", "options": ["ग्रह्", "गृह", "गृही", "गृहि"], "answer": 0},
+    {"text": "प्रतिषिद्धाः = प्रति + _____ + क्त", "options": ["साध्", "सिधि", "सिध्", "षिद्ध"], "answer": 2},
+    {"text": "दत्ता = दा + _____ + टाप्", "options": ["क्तवतु", "शतृ", "क्त", "त्ता"], "answer": 2},
+    {"text": "भूत्वा = भू + _____", "options": ["क्तवतु", "क्त", "क्त्वाच्", "त्वाच"], "answer": 2},
+];
+
+  // Sanskrit digit converter
+  function toSanskritNum(num){
+    const d=['०','१','२','३','४','५','६','७','८','९'];
+    return String(num).split('').map(x=>d[x]).join('');
+  }
+
+  // Render quiz
+  const quizContainer=document.getElementById('quiz');
+  questions.forEach((q,i)=>{
+    const d=document.createElement('div');
+    d.className='question';
+    d.id='q'+(i+1);
+    const qNum=toSanskritNum(i+1);
+    const total=toSanskritNum(questions.length);
+    d.innerHTML=`
+      <div class="qtitle"><strong>प्रश्नः ${qNum}.</strong> ${q.text}</div>
+      <div class="options">
+        ${q.options.map((opt,ji)=>`<div class="opt" data-index="${ji}" onclick="selectOption(${i+1}, this)">${opt}</div>`).join('')}
+      </div>
+      <div class="meta">प्रश्नः ${qNum} / ${total}</div>
+    `;
+    quizContainer.appendChild(d);
+  });
+
+  // State
+  let current=1, answersMap={}, marked=0;
+
+  function showQuestion(n){
+    document.querySelectorAll('.question').forEach(el=>el.style.display='none');
+    const el=document.getElementById('q'+n);
+    if(el) el.style.display='block';
+    current=n;
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function updateStatus(){
+    const attempted=Object.keys(answersMap).length;
+    const notAttempted=questions.length-attempted;
+    document.getElementById('status').innerText=
+      `प्रयत्नाः : ${toSanskritNum(attempted)} | अनुत्तरितः : ${toSanskritNum(notAttempted)} | पुनर्द्रष्टव्यः : ${toSanskritNum(marked)}`;
+  }
+
+  function selectOption(qNum,el){
+    document.querySelectorAll(`#q${qNum} .opt`).forEach(o=>o.classList.remove('selected'));
+    el.classList.add('selected');
+    answersMap[qNum]=el.innerText.trim();
+    if(el.innerText.trim()===questions[qNum-1].options[questions[qNum-1].answer]){
+      triggerCongrats();
+    }
+    updateStatus();
+  }
+
+  function prevQuestion(){if(current>1)showQuestion(current-1);}
+  function nextQuestion(){if(current<questions.length)showQuestion(current+1);}
+  function markReview(){marked++;updateStatus();}
+
+  // congrats popup + floating flowers (one-time small shower each correct selection)
+    function triggerCongrats(){
+      const popup = document.getElementById('congrats');
+      popup.classList.add('show');
+      setTimeout(()=>popup.classList.remove('show'),1800);
+
+      // spawn flowers
+      for(let i=0;i<12;i++){
+        const f = document.createElement('div');
+        f.className = 'floating-flower';
+        const petals = ['🌸','🌺','🌼','💐','🌷'];
+        f.innerText = petals[Math.floor(Math.random()*petals.length)];
+        f.style.left = (5 + Math.random()*90) + 'vw';
+        f.style.fontSize = (18 + Math.random()*26) + 'px';
+        // random duration and delay
+        const dur = 3 + Math.random()*2.5;
+        f.style.animationDuration = dur + 's';
+        f.style.animationDelay = (Math.random()*0.3) + 's';
+        document.body.appendChild(f);
+        setTimeout(()=>f.remove(), (dur+0.4)*1000 + 600);
+      }
+    }
+
+  function finishExam(){
+    let correctCount=0,html='';
+    for(let i=0;i<questions.length;i++){
+      const qNum=i+1,q=questions[i],correct=q.options[q.answer];
+      const given=answersMap[qNum]||null;
+      const ok=given!==null && given===correct;
+      if(ok)correctCount++;
+      html+=`<div class="answer-block">
+        <div><strong>प्रश्नः ${toSanskritNum(qNum)}.</strong> ${q.text}</div>
+        <p>दत्त उत्तरः: <span class="${ok?'right':'wrong'}">${given||'न दत्त'}</span></p>
+        <p>समीचीन उत्तरः: <strong>${correct}</strong></p>
+      </div>`;
+    }
+    const summary=`<div class="summary">योगफलम् : ${toSanskritNum(correctCount)} / ${toSanskritNum(questions.length)}</div>`;
+    document.getElementById('answers').innerHTML=summary+html;
+    document.getElementById('quiz').style.display='none';
+    document.getElementById('results').style.display='block';
+  }
+
+  showQuestion(1);
+  updateStatus();
+  </script>
+</body>
+</html>

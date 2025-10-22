@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="sa">
+<head>
+  <meta charset="utf-8" />
+  <title>ନୀତିମଞ୍ଜରୀ (ସଂସ୍କୃତ)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root{--orange:#d35400;--soft:#fff3e0;--btn:#e67e22}
+    body{margin:0;font-family:"Noto Sans Devanagari",sans-serif;background:orange;color:#222}
+    header{background:var(--orange);color:#fff;padding:18px 12px;text-align:center}
+    h1{margin:0;font-size:20px;animation:glow 6s infinite}
+    @keyframes glow{
+      0%{color:#fff;text-shadow:0 0 8px crimson}
+      25%{color:#ffeb3b;text-shadow:0 0 18px green}
+      50%{color:#00bcd4;text-shadow:0 0 18px blue}
+      75%{color:#e91e63;text-shadow:0 0 18px purple}
+      100%{color:#fff;text-shadow:0 0 8px crimson}
+    }
+    h2{margin:4px 0 0 0;font-size:18px;opacity:1;animation:fade 3s infinite}
+    @keyframes fade{0%,45%{opacity:0}50%,95%{opacity:1}100%{opacity:0}}
+    .wrap{padding:8px;max-width:750px;margin:0 auto}
+    .question{background:var(--soft);border-radius:12px;padding:12px;margin:14px auto;box-shadow:0 4px 10px rgba(0,0,0,.18);max-width:720px auto;text-align:center;display:none}
+    .qtitle{font-size:32px;font-weight:bold;margin-bottom:12px}
+    .options{display:flex;flex-direction:column;gap:8px;align-items:center; font-size:40px}
+    .opt{width:100%;max-width:500px;background:#f8c471;padding:6px;border-radius:12px;cursor:pointer;transition:transform .15s,background .15s;box-shadow:0 2px 6px rgba(0,0,0,.08);text-align:center}
+    .opt:hover{transform:scale(1.02);background:#f5b041}
+    .opt.selected{background:#d35400;color:#fff;font-weight:700}
+    .controls{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+    .controls button{background:var(--btn);color:#fff;border:none;padding:2px 10px;border-radius:10px;cursor:pointer}
+    .controls button:hover{filter:brightness(.95)}
+    .status{margin:10px auto;text-align:center;font-weight:700}
+    #results{display:none;margin-top:16px}
+    #answers{background:var(--soft);padding:16px;border-radius:10px}
+    .answer-block{border-bottom:1px solid #ddd;padding:10px 0}
+    .right{color:green;font-weight:700}.wrong{color:red;font-weight:700}
+    #congrats{position:fixed;left:50%;top:20%;transform:translateX(-50%) scale(0);background:#fff;padding:18px 26px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.25);z-index:9999;text-align:center}
+    #congrats.show{animation:pop .55s forwards}
+    @keyframes pop{0%{transform:translateX(-50%) scale(0);opacity:0}60%{transform:translateX(-50%) scale(1.08);opacity:1}100%{transform:translateX(-50%) scale(1)}}
+    .floating-flower{position:fixed;top:-60px;font-size:30px;pointer-events:none;z-index:9998;animation:fall linear forwards}
+    @keyframes fall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(360deg);opacity:0}}
+    .meta{font-size:13px;color:#333;margin-top:6px}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>जयतु भारतम् &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;।।🌼🌼 योऽनूचानः स नो महान्  🌼🌼 ।।&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;जयतु संस्कृतम्</h1>
+</header>
+
+  <div class="wrap">
+    <div id="quiz"></div>
+
+    <div class="controls" style="margin-top:18px">
+      <button onclick="prevQuestion()">पुर्वप्रश्नः</button>
+      <button onclick="nextQuestion()">परप्रश्नः</button>
+      <button onclick="markReview()">पुनर्द्रष्टव्यः</button>
+      <button onclick="finishExam()">समाप्तिः </button>
+    </div>
+
+    <div class="status" id="status">प्रयत्नाः: 0 | अनुत्तरितः: 0 | पुनर्द्रष्टव्यः: 0</div>
+
+    <div id="results">
+      <h3>भवतः उत्तराणि</h3>
+      <div id="answers"></div>
+    </div>
+  </div>
+
+  <div id="congrats">
+    <div style="font-size:26px">🎉 अभिनन्दनम्! 🎉</div>
+    <div style="margin-top:8px;color:#2c3e50;font-weight:700"> ✅ यथार्थं उत्तरम्</div>
+  </div>
+
+  <script>
+    // -------------------------
+    // Questions data (71 total)
+    // Note: answers default to index 0 (A). Change 'answer' if you want different correct.
+    // -------------------------
+    const questions = [
+{text:"ଅଭିବାଦନଶୀଳସ୍ୟ କାନି ବର୍ଧନ୍ତେ ?", options:["ଆୟୁଃ","ବିଦ୍ୟା","ୟଶଃ, ବଳମ୍","ଚତ୍ୱାରି"], answer:3},
+{text:"ସର୍ପଦୁର୍ଜନୟୋଃ ମଧ୍ୟେ କଃ ଶ୍ରେଷ୍ଠଃ ?", options:["ସର୍ପଃ","ବିଦ୍ୟା","ୟଶଃ, ବଳମ୍","ଦୁର୍ଜନଃ"], answer:3},
+{text:"କଃ ନ ପ୍ରତିକ୍ଷନ୍ତେ ?", options:["ଆୟୁଃ","ବିଦ୍ୟା","ମୃତ୍ୟୁଃ","ରାମଃ"], answer:2},
+{text:"କିଂ  କୁର୍ବିତ ?", options:["ଶ୍ୱକାର୍ଯ୍ୟମଦ୍ୟ ","ବିଦ୍ୟା","ୟଶଃ","ସଂଗୀତନୃତ୍ୟ"], answer:0},
+{text:"ବର୍ତ୍ତମାନେଷୁ କେ ବର୍ତ୍ତୟନ୍ତେ ?", options:["ବିଚକ୍ଷଣାଃ","ସାଧୁଃ","ୟଶଃ","ନରଃ"], answer:0},
+{text:"ତୃଣୈରାରାଭ୍ୟତେ _______, ତୟା ନାଗଃ ଅପି ବଧ୍ୟତେ।", options:["ରଜ୍ଜୁଃ","ଦିବା","ୟଶଃ","ବିଦ୍ୟା"], answer:0},
+{text:"ପୁଷ୍ପମାଳାନୁଷଙ୍ଗେଣ ତୃଣଂ_______  ଧାର୍ୟ୍ୟତେ।", options:["ଶିରସି","ଦିବା","ରାତ୍ରୀ","ବିଦ୍ୟାଷୁ"], answer:0},
+{text:"କେ ଯଶଃ ପ୍ରାପ୍ନୋତି କେବଳମ୍ ?", options:["ଦେବାନ୍","ପିତୃନ୍ ମାନୁଷ୍ୟାଂ","ଗୁରୁନ୍ ଅତିଥି","ଏତେ ସର୍ବେ"], answer:0},
+
+    ];
+
+    // -------------------------
+    // Utility: Fisher-Yates shuffle
+    // -------------------------
+    function shuffleArray(arr){
+      for(let i=arr.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [arr[i],arr[j]]=[arr[j],arr[i]];
+      }
+      return arr;
+    }
+
+    // Shuffle questions order (no repeats)
+    shuffleArray(questions);
+
+    // For each question: shuffle options and update answer index
+    questions.forEach(q=>{
+      const correct = q.options[q.answer];
+      shuffleArray(q.options);
+      q.answer = q.options.indexOf(correct);
+    });
+
+    // render quiz DOM
+    const quizContainer = document.getElementById('quiz');
+    questions.forEach((q,i)=>{
+      const d = document.createElement('div');
+      d.className = 'question';
+      d.id = 'q'+(i+1);
+      d.innerHTML = `
+        <div class="qtitle"><strong>Q${i+1}.</strong> ${q.text}</div>
+        <div class="options">
+          ${q.options.map((opt,ji)=>`<div class="opt" data-index="${ji}" onclick="selectOption(${i+1}, this)">${opt}</div>`).join('')}
+        </div>
+        <div class="meta" style="margin-top:10px">प्रश्न ${i+1} / ${questions.length}</div>
+      `;
+      quizContainer.appendChild(d);
+    });
+
+    // state
+    let current = 1;
+    let answersMap = {}; // qNum -> text
+    let marked = 0;
+
+    // show first
+    function showQuestion(n){
+      document.querySelectorAll('.question').forEach(el=>el.style.display='none');
+      const el = document.getElementById('q'+n);
+      if(el) el.style.display='block';
+      current = n;
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    function updateStatus(){
+      const attempted = Object.keys(answersMap).length;
+      const notAttempted = questions.length - attempted;
+      document.getElementById('status').innerText = `प्रयत्नाः: ${attempted} | अनुत्तरितः: ${notAttempted} | पुनर्द्रष्टव्यः: ${marked}`;
+    }
+
+    function selectOption(qNum, el){
+      // mark selected (visual)
+      const opts = document.querySelectorAll(`#q${qNum} .opt`);
+      opts.forEach(o=>o.classList.remove('selected'));
+      el.classList.add('selected');
+      // save answer
+      answersMap[qNum] = el.innerText.trim();
+
+      // check correctness: find correct option text for that question
+      const q = questions[qNum-1];
+      const correctText = q.options[q.answer];
+
+      if(el.innerText.trim() === correctText){
+        triggerCongrats();
+      }
+      updateStatus();
+    }
+
+    function prevQuestion(){ if(current>1){ showQuestion(current-1); } }
+    function nextQuestion(){ if(current<questions.length){ showQuestion(current+1); } }
+
+    function markReview(){
+      marked++;
+      updateStatus();
+      // visually indicate on current question (small mark)
+      const el = document.getElementById('q'+current);
+      if(el && !el.querySelector('.marked')) {
+        const m = document.createElement('div');
+        m.className = 'meta marked';
+        m.style.marginTop='8px';
+        m.style.fontWeight='700';
+        m.innerText = '🔖 पुनर्द्रष्टव्यः';
+        el.appendChild(m);
+      }
+    }
+
+    // congrats popup + floating flowers (one-time small shower each correct selection)
+    function triggerCongrats(){
+      const popup = document.getElementById('congrats');
+      popup.classList.add('show');
+      setTimeout(()=>popup.classList.remove('show'),1800);
+
+      // spawn flowers
+      for(let i=0;i<12;i++){
+        const f = document.createElement('div');
+        f.className = 'floating-flower';
+        const petals = ['🌸','🌺','🌼','💐','🌷'];
+        f.innerText = petals[Math.floor(Math.random()*petals.length)];
+        f.style.left = (5 + Math.random()*90) + 'vw';
+        f.style.fontSize = (18 + Math.random()*26) + 'px';
+        // random duration and delay
+        const dur = 3 + Math.random()*2.5;
+        f.style.animationDuration = dur + 's';
+        f.style.animationDelay = (Math.random()*0.3) + 's';
+        document.body.appendChild(f);
+        setTimeout(()=>f.remove(), (dur+0.4)*1000 + 600);
+      }
+    }
+
+    // finish exam -> show results
+    function finishExam(){
+      let correctCount = 0;
+      let html = '';
+      for(let i=0;i<questions.length;i++){
+        const qNum = i+1;
+        const q = questions[i];
+        const correctValue = q.options[q.answer];
+        const studentValue = answersMap[qNum] || null;
+        const isCorrect = studentValue !== null && studentValue === correctValue;
+        if(isCorrect) correctCount++;
+        const symbol = isCorrect ? '✅' : '❌';
+        const cls = isCorrect ? 'right' : 'wrong';
+
+        html += `<div class="answer-block">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div><strong>Q${qNum}.</strong> ${q.text}</div>
+            <div style="font-size:18px">${symbol}</div>
+          </div>
+          <p>दत्त उत्तर: <span class="${cls}">${studentValue ? studentValue + ' ' + symbol : 'न दत्त'}</span></p>
+          <p>समीचीन उत्तर: <strong>${correctValue}</strong></p>
+          <p style="color:#555">विकल्पाः: ${q.options.join(' , ')}</p>
+        </div>`;
+      }
+      const summary = `<div class="summary" style="padding:8px 0;font-weight:800">योगफल: योग्य: ${correctCount} / ${questions.length} — प्रयत्नाः: ${Object.keys(answersMap).length} — अनुत्तरितः: ${questions.length - Object.keys(answersMap).length}</div>`;
+      document.getElementById('answers').innerHTML = summary + html;
+      document.getElementById('quiz').style.display = 'none';
+      document.getElementById('results').style.display = 'block';
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    // initialize
+    showQuestion(1);
+    updateStatus();
+  </script>
+</body>
+</html>

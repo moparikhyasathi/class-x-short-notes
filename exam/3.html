@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="sa">
+<head>
+  <meta charset="utf-8" />
+  <title>स्वामीविवेकानन्द (ସଂସ୍କୃତ)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root{--orange:#d35400;--soft:#fff3e0;--btn:#e67e22}
+    body{margin:0;font-family:"Noto Sans Devanagari",sans-serif;background:orange;color:#222}
+    header{background:var(--orange);color:#fff;padding:6px 8px;text-align:center}
+    h1{margin:0;font-size:16px;animation:glow 6s infinite}
+    @keyframes glow{
+      0%{color:#fff;text-shadow:0 0 8px crimson}
+      25%{color:#ffeb3b;text-shadow:0 0 10px green}
+      50%{color:#00bcd4;text-shadow:0 0 10px blue}
+      75%{color:#e91e63;text-shadow:0 0 10px purple}
+      100%{color:#fff;text-shadow:0 0 8px crimson}
+    }
+    h2{margin:4px 0 0 0;font-size:18px;opacity:1;animation:fade 3s infinite}
+    @keyframes fade{0%,45%{opacity:0}50%,95%{opacity:1}100%{opacity:0}}
+    .wrap{padding:8px;max-width:750px;margin:0 auto}
+    .question{background:var(--soft);border-radius:12px;padding:12px;margin:14px auto;box-shadow:0 4px 10px rgba(0,0,0,.18);max-width:720px auto;text-align:center;display:none}
+    .qtitle{font-size:32px;font-weight:bold;margin-bottom:12px}
+    .options{display:flex;flex-direction:column;gap:8px;align-items:center; font-size:40px}
+    .opt{width:100%;max-width:500px;background:#f8c471;padding:6px;border-radius:12px;cursor:pointer;transition:transform .15s,background .15s;box-shadow:0 2px 6px rgba(0,0,0,.08);text-align:center}
+    .opt:hover{transform:scale(1.02);background:#f5b041}
+    .opt.selected{background:#d35400;color:#fff;font-weight:700}
+    .controls{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+    .controls button{background:var(--btn);color:#fff;border:none;padding:2px 10px;border-radius:10px;cursor:pointer}
+    .controls button:hover{filter:brightness(.95)}
+    .status{margin:10px auto;text-align:center;font-weight:700}
+    #results{display:none;margin-top:16px}
+    #answers{background:var(--soft);padding:16px;border-radius:10px}
+    .answer-block{border-bottom:1px solid #ddd;padding:10px 0}
+    .right{color:green;font-weight:700}.wrong{color:red;font-weight:700}
+    #congrats{position:fixed;left:50%;top:20%;transform:translateX(-50%) scale(0);background:#fff;padding:18px 26px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.25);z-index:9999;text-align:center}
+    #congrats.show{animation:pop .55s forwards}
+    @keyframes pop{0%{transform:translateX(-50%) scale(0);opacity:0}60%{transform:translateX(-50%) scale(1.08);opacity:1}100%{transform:translateX(-50%) scale(1)}}
+    .floating-flower{position:fixed;top:-60px;font-size:30px;pointer-events:none;z-index:9998;animation:fall linear forwards}
+    @keyframes fall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(360deg);opacity:0}}
+    .meta{font-size:13px;color:#333;margin-top:6px}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>जयतु भारतम् &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;।।🌼🌼 योऽनूचानः स नो महान्  🌼🌼 ।।&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;जयतु संस्कृतम्</h1>
+    <h2></h2>
+  </header>
+
+  <div class="wrap">
+    <div id="quiz"></div>
+
+    <div class="controls" style="margin-top:16px">
+      <button onclick="prevQuestion()">पुर्वप्रश्नः</button>
+      <button onclick="nextQuestion()">परप्रश्नः</button>
+      <button onclick="markReview()">पुनर्द्रष्टव्यः</button>
+      <button onclick="finishExam()">समाप्तिः</button>
+    </div>
+
+    <div class="status" id="status">प्रयत्नाः : ० | अनुत्तरितः : ० | पुनर्द्रष्टव्यः : ०</div>
+
+    <div id="results">
+      <h3>भवतः उत्तराणि</h3>
+      <div id="answers"></div>
+    </div>
+  </div>
+
+  <div id="congrats">
+    <div style="font-size:26px">🎉 अभिनन्दनम् ! 🎉</div>
+    <div style="margin-top:8px;color:#2c3e50;font-weight:700">✅ यथार्थं उत्तरम्</div>
+  </div>
+
+  <script>
+  const questions = [
+    {"text": "नरेन्द्रनाथस्य माता का ?", "options": ["विश्वेश्वरी देवी", "भुवनेश्वरी देवी", "श्यामामणि देवी", "विन्ध्येश्वरी देवी"], "answer": 1},
+    {"text": "महामानबाः ______ ।", "options": ["महत्पुरुषाः", "युगजन्मनः", "परोपकारिणः", "दिव्यपुरुषाः"], "answer": 3},
+    {"text": "______  इति नगरे विवेकानन्दस्य जन्म ।", "options": ["कोलकता", "मुम्बाइ", "चेन्नाइ", "कटक"], "answer": 0},
+    {"text": "ते ______ पृथिवीम् अवतरन्ति ।", "options": ["अन्तरिक्षात्", "देवलोकात्", "अमरधाम्नः", "पुण्यधाम्नः"], "answer": 2},
+    {"text": "भुवनेश्वरीदेवी विश्वनाथ दत्तश्च विवेकानन्दस्य ______", "options": ["भगिनी-भ्रातरौ", "माता-पितरौ", "मातुली-मातुलौ", "पितृव्या-पितृव्यौ"], "answer": 1},
+    {"text": "विवेकानन्दस्य मातुः नाम ______।", "options": ["माहेश्वरी देवी", "पद्मावती देवी", "भुवनेश्वरी देवी", "गंगा देवी"], "answer": 2},
+    {"text": "विवेकानन्दस्य पितुः नाम ______", "options": ["दुर्गा दत्तः", "विश्वनाथ दत्तः", "करुणाकर दत्तः", "पद्मनाभ दत्तः"], "answer": 1},
+    {"text": "पुत्र ! आजीवनं ______  भव ।", "options": ["सुखी", "पवित्रः", "अग्नन्दितः", "निरोगः"], "answer": 1},
+    {"text": "______  उपदेशं स स्वजीवने आचरितवान् ।", "options": ["मातुः", "पितुः", "भ्रातुः", "गुरोः"], "answer": 0},
+    {"text": "_____ व्याकुलोऽसौ रामकृष्णपरमहंसं निकषा गतवान् ।", "options": ["ज्ञानार्जने", "ईश्वरानुसंन्धाने", "सद्‌गुरु अन्वेषणे", "विद्यार्जने"], "answer": 1},
+    {"text": "रामकृष्णपरमहंसे तस्य ______ जातः ।", "options": ["पूर्णविश्वासः", "प्रगाढ़स्नेहः", "भक्तिभावः", "श्रद्धाभावः"], "answer": 0},
+    {"text": "______ विवेकानन्दस्य पूर्णविश्वासः जातः ।", "options": ["मातरि", "पितरः", "पार्वतीपरमेश्वरयोः", "रामकृष्णपरमहंसे"], "answer": 0},
+    {"text": "योग्यगुरोः योग्यशिष्यस्य च संयोगः ______ ।", "options": ["कर्मनिर्दिष्टः", "दैवनिर्दिष्टः", "देवनिर्दिष्टः", "ईश्वरनिर्दिष्टः"], "answer": 1},
+    {"text": "विवेकानन्दः कथं रामकृष्णपरमहंसं निकषा गतवान् ?", "options": ["सद्‌गुरु अन्वेषणेन", "ईश्वरानुसन्धाने व्याकुल भूत्वा", "कृतिप्रश्नानां समाधानाय", "तस्य दर्शनाय"], "answer": 1},
+    {"text": "विवेकानन्दंस्य स्मृतिः आसीत् ______।", "options": ["प्रशस्ता", "प्रभूता", "प्रबला", "प्रखरा"], "answer": 3},
+    {"text": "______ मिते दिवसे चिकागोनगरे विश्वधर्म सम्मेलनं अभवत् ।", "options": ["सेप्टेम्वर 11,1893 ", "12 सेप्टेम्वर 1884", "13 सेप्टेम्वर 1893", "14 सेप्टेम्वर 1893"], "answer": 0},
+    {"text": "कं विषयम् अनुसृत्य विवेकानन्दः सकलान् चमत्कृतवान् ?", "options": ["'वसुधैव कुटुम्बकम्' इति विषयं", "सर्वधर्म विषयम्", "परमात्मा विषयम्", "आत्मा विषयम्"], "answer": 0},
+    {"text": "समुचितं भाषणं दत्त्वा सः ______ बभूव ।", "options": ["लोकविख्यातः", "विश्वविश्रुतः", "जगत्प्रसिद्धः", "लोकविश्रुतः"], "answer": 1},
+    {"text": "वेलुरुग्रामे कस्य नाम्ना विवेकानन्दः मठं स्थापितवान् ?", "options": ["ईश्वरकृष्णस्य", "ईश्वरचन्द्रस्य", "रामेश्वरस्य", "रामकृष्णस्य"], "answer": 3},
+    {"text": "विवेकानन्दः कां पूजयितुं कथयति ?", "options": ["देवीम्", "दुर्गाम्", "मातरम्", "कालीम्"], "answer": 2},
+    {"text": "आत्मनः प्रकाशः विकासः चेति द्वयं नाम सफलं ______ ।", "options": ["कर्म", "जीवनम्", "वृत्तम्", "विधानम्"], "answer": 1},
+    {"text": "तस्य अमरवाण्याः ______ प्रयोगः तं प्रति यथार्थसम्मानः भविष्यति ।", "options": ["साधुः", "सुष्टु", "सफल:", "सार्थकः"], "answer": 1},
+    {"text": "प्रायशः ईश्वरस्य पुत्रः न खलु______।", "options": ["स्वल्पजीविनः", "निरोगजीविनः", "दीर्घजीविनः", "क्षणजीविनः"], "answer": 2},
+    {"text": "विवेकानन्दः कदा दिव्यधाम गतवान्?", "options": ["८ जुलाइ १९०२ मिते दिवसे", "७ जुलाइ १९०२ मिते दिवसे", "४ जुलाइ १९०२ मिते दिवसे", "९ जुलाइ १९०२ मिते दिवसे"], "answer": 2},
+  {
+    "text": "सः <u>रामकृष्णपरमहंसं</u> निकषा गत्वा पृष्टवान् । - विभक्तिः ?",
+    "options": ["कर्मणि द्वितीया", "निकषा शब्दयोगे द्वितीया", "व्याप्तार्थे द्वितीया", "क्रिया विशेशणे द्वितीया"],
+    "answer": 1
+  },
+  {
+    "text": "<u>पुत्र !</u> आजीवनं पवित्रो भव। - विभक्तिः ?",
+    "options": ["कर्त्तरि प्रथमा", "सम्वोधने प्रथमा", "अव्यय योगे प्रथमा", "उक्ते कर्मणि प्रथमा"],
+    "answer": 1
+  },
+  {
+    "text": "उत्तरं <u>रामकृष्णेन</u> प्रदत्तम्। - विभक्तिः ?",
+    "options": ["सहार्थे तृतीया", "प्रयोजनार्थे तृतीया", "अनुक्ते कर्त्तरि तृतीया", "करणे तृतीया"],
+    "answer": 2
+  },
+  {
+    "text": "अनेकत्र <u>सेवा</u> क्रियते। - विभक्तिः ?",
+    "options": ["कर्त्तरि प्रथमा", "उक्ते कर्मणि प्रथमा", "अव्यय योगे प्रथमा", "सम्वोधने प्रथमा"],
+    "answer": 1
+  },
+  {
+    "text": "मौलिकतत्वस्य <u>प्रचारेण</u> सह स दरिद्राणां सेवाम् आरभत । - विभक्तिः ?",
+    "options": ["सहयोगे तृतीया", "शेषे षष्ठी", "करणे तृतीया", "कृते षष्ठी"],
+    "answer": 0
+  },
+  {
+    "text": "<u>दरिद्राणां</u> कृते तस्य हृदयं विगलितं आसीत् । - विभक्तिः ?",
+    "options": ["सहयोगे तृतीया", "शेषे षष्ठी", "करणे तृतीया", "कृते षष्ठी"],
+    "answer": 3
+  },
+    {"text": "दृष्टवान् + अस्मि = ?", "options": ["दृष्टवान्वस्मि", "दृष्टवानास्मि", "दृष्टवानस्मि", "दृष्टवानस्मिः"], "answer": 2},
+    {"text": "सत्यम् + इदम् = ?", "options": ["सत्येदं", "सत्यमिदम्", "सत्येदम्", "सत्यामिदम्"], "answer": 1},
+    {"text": "वसुधा + एव = ?", "options": ["वसुधेव", "वसूधैव", "वसुधाएव", "वसुधैव"], "answer": 3},
+    {"text": "उद् + ज्वलम् = ?", "options": ["उज्जलम्", "उज्ज्वलम्", "उज्ज्वल", "उज्ज्वलम"], "answer": 1},
+    {"text": "विकासः + च = ?", "options": ["विकाशश्च", "विकासश्च", "विकासच", "विकाशश्चः"], "answer": 1},
+    {"text": "कूलमानेतुम् = सन्धिविच्छेदं ?", "options": ["कूलं+आनेतुम्", "कुल+मानेतुम्", "कुलम्+आनेतुम्", "कूलम्+आनेतुम्"], "answer": 3},
+    {"text": "युगाकाशे = सन्धिविच्छेदं ?", "options": ["युगा+काशे", "युग+आकाशेः", "युगः+आकाशे", "युग+आकाशे"], "answer": 3},
+    {"text": "गङ्गेव = सन्धिविच्छेदं ?", "options": ["गङ्गा+एव", "गङ्गा+एवः", "गङ्गा+इव", "गाङ्गा+उव"], "answer": 0},
+    {"text": "कृतेऽद्यापि = सन्धिविच्छेदं ?", "options": ["कृते+आद्यापि", "कृते+अद्यः+अपि", "कृत+अद्य+अपि", "कृते+अद्य+अपि"], "answer": 3},
+    {"text": "अतीव = सन्धिविच्छेदं ?", "options": ["अति+इव", "अती+इव", "अतिः+इव", "अति+एव"], "answer": 0},
+
+    {"text": "संसारः एव सागरः तस्मिन् - समास ?", "options": ["संसारसागरः", "संसारसागरे", "संसार सागरात्", "संसारे सागरे"], "answer": 1},
+    {"text": "रत्नगर्भा - समास ?", "options": ["द्वन्द्वः", "कर्मधारयः", "बहुव्रीहिः", "उपपद तत्पुरुषः"], "answer": 1},
+    {"text": "सार्थकं नाम यस्य सः - समास ?", "options": ["सार्थकनाम्", "सार्थकनामा", "सार्थकनाम्नी", "सार्थकनाम्ना"], "answer": 1},
+    {"text": "ईश्वरानुसन्धानम् - समास ?", "options": ["कर्मधारयः", "अव्ययीभावः", "षष्ठी तत्पुरुषः", "द्विगुः"], "answer": 2},
+    {"text": "दिव्यपुरुषः - समास ?", "options": ["दिव्यः पुरुषः", "दिव्यस्य पुरुषस्य", "दिव्येन पुरुषः", "दिव्यः एव पुरुषः"], "answer": 0}
+  ];
+// -------------------------
+    // Utility: Fisher-Yates shuffle
+    // -------------------------
+    function shuffleArray(arr){
+      for(let i=arr.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [arr[i],arr[j]]=[arr[j],arr[i]];
+      }
+      return arr;
+    }
+
+    // Shuffle questions order (no repeats)
+    shuffleArray(questions);
+
+    // For each question: shuffle options and update answer index
+    questions.forEach(q=>{
+      const correct = q.options[q.answer];
+      shuffleArray(q.options);
+      q.answer = q.options.indexOf(correct);
+    });
+
+
+  // Sanskrit digit converter
+  function toSanskritNum(num){
+    const d=['०','१','२','३','४','५','६','७','८','९'];
+    return String(num).split('').map(x=>d[x]).join('');
+  }
+
+  // Render quiz
+  const quizContainer=document.getElementById('quiz');
+  questions.forEach((q,i)=>{
+    const d=document.createElement('div');
+    d.className='question';
+    d.id='q'+(i+1);
+    const qNum=toSanskritNum(i+1);
+    const total=toSanskritNum(questions.length);
+    d.innerHTML=`
+      <div class="qtitle"><strong>प्रश्नः ${qNum}.</strong> ${q.text}</div>
+      <div class="options">
+        ${q.options.map((opt,ji)=>`<div class="opt" data-index="${ji}" onclick="selectOption(${i+1}, this)">${opt}</div>`).join('')}
+      </div>
+      <div class="meta">प्रश्नः ${qNum} / ${total}</div>
+    `;
+    quizContainer.appendChild(d);
+  });
+
+  // State
+  let current=1, answersMap={}, marked=0;
+
+  function showQuestion(n){
+    document.querySelectorAll('.question').forEach(el=>el.style.display='none');
+    const el=document.getElementById('q'+n);
+    if(el) el.style.display='block';
+    current=n;
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function updateStatus(){
+    const attempted=Object.keys(answersMap).length;
+    const notAttempted=questions.length-attempted;
+    document.getElementById('status').innerText=
+      `प्रयत्नाः : ${toSanskritNum(attempted)} | अनुत्तरितः : ${toSanskritNum(notAttempted)} | पुनर्द्रष्टव्यः : ${toSanskritNum(marked)}`;
+  }
+
+  function selectOption(qNum,el){
+    document.querySelectorAll(`#q${qNum} .opt`).forEach(o=>o.classList.remove('selected'));
+    el.classList.add('selected');
+    answersMap[qNum]=el.innerText.trim();
+    if(el.innerText.trim()===questions[qNum-1].options[questions[qNum-1].answer]){
+      triggerCongrats();
+    }
+    updateStatus();
+  }
+
+  function prevQuestion(){if(current>1)showQuestion(current-1);}
+  function nextQuestion(){if(current<questions.length)showQuestion(current+1);}
+  function markReview(){marked++;updateStatus();}
+
+  // congrats popup + floating flowers (one-time small shower each correct selection)
+    function triggerCongrats(){
+      const popup = document.getElementById('congrats');
+      popup.classList.add('show');
+      setTimeout(()=>popup.classList.remove('show'),1800);
+
+      // spawn flowers
+      for(let i=0;i<12;i++){
+        const f = document.createElement('div');
+        f.className = 'floating-flower';
+        const petals = ['🌸','🌺','🌼','💐','🌷'];
+        f.innerText = petals[Math.floor(Math.random()*petals.length)];
+        f.style.left = (5 + Math.random()*90) + 'vw';
+        f.style.fontSize = (18 + Math.random()*26) + 'px';
+        // random duration and delay
+        const dur = 3 + Math.random()*2.5;
+        f.style.animationDuration = dur + 's';
+        f.style.animationDelay = (Math.random()*0.3) + 's';
+        document.body.appendChild(f);
+        setTimeout(()=>f.remove(), (dur+0.4)*1000 + 600);
+      }
+    }
+
+  function finishExam(){
+    let correctCount=0,html='';
+    for(let i=0;i<questions.length;i++){
+      const qNum=i+1,q=questions[i],correct=q.options[q.answer];
+      const given=answersMap[qNum]||null;
+      const ok=given!==null && given===correct;
+      if(ok)correctCount++;
+      html+=`<div class="answer-block">
+        <div><strong>प्रश्नः ${toSanskritNum(qNum)}.</strong> ${q.text}</div>
+        <p>दत्त उत्तरः: <span class="${ok?'right':'wrong'}">${given||'न दत्त'}</span></p>
+        <p>समीचीन उत्तरः: <strong>${correct}</strong></p>
+      </div>`;
+    }
+    const summary=`<div class="summary">योगफलम् : ${toSanskritNum(correctCount)} / ${toSanskritNum(questions.length)}</div>`;
+    document.getElementById('answers').innerHTML=summary+html;
+    document.getElementById('quiz').style.display='none';
+    document.getElementById('results').style.display='block';
+  }
+
+  showQuestion(1);
+  updateStatus();
+  </script>
+</body>
+</html>

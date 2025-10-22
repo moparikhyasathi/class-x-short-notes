@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="sa">
+<head>
+  <meta charset="utf-8" />
+  <title>युद्धिष्ठर यक्षः सम्वादः (ସଂସ୍କୃତ)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root{--orange:#d35400;--soft:#fff3e0;--btn:#e67e22}
+    body{margin:0;font-family:"Noto Sans Devanagari",sans-serif;background:orange;color:#222}
+    header{background:var(--orange);color:#fff;padding:6px 8px;text-align:center}
+    h1{margin:0;font-size:16px;animation:glow 6s infinite}
+    @keyframes glow{
+      0%{color:#fff;text-shadow:0 0 8px crimson}
+      25%{color:#ffeb3b;text-shadow:0 0 10px green}
+      50%{color:#00bcd4;text-shadow:0 0 10px blue}
+      75%{color:#e91e63;text-shadow:0 0 10px purple}
+      100%{color:#fff;text-shadow:0 0 8px crimson}
+    }
+    h2{margin:4px 0 0 0;font-size:18px;opacity:1;animation:fade 3s infinite}
+    @keyframes fade{0%,45%{opacity:0}50%,95%{opacity:1}100%{opacity:0}}
+    .wrap{padding:8px;max-width:750px;margin:0 auto}
+    .question{background:var(--soft);border-radius:12px;padding:12px;margin:14px auto;box-shadow:0 4px 10px rgba(0,0,0,.18);max-width:720px auto;text-align:center;display:none}
+    .qtitle{font-size:32px;font-weight:bold;margin-bottom:12px}
+    .options{display:flex;flex-direction:column;gap:8px;align-items:center; font-size:40px}
+    .opt{width:100%;max-width:500px;background:#f8c471;padding:6px;border-radius:12px;cursor:pointer;transition:transform .15s,background .15s;box-shadow:0 2px 6px rgba(0,0,0,.08);text-align:center}
+    .opt:hover{transform:scale(1.02);background:#f5b041}
+    .opt.selected{background:#d35400;color:#fff;font-weight:700}
+    .controls{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+    .controls button{background:var(--btn);color:#fff;border:none;padding:2px 10px;border-radius:10px;cursor:pointer}
+    .controls button:hover{filter:brightness(.95)}
+    .status{margin:10px auto;text-align:center;font-weight:700}
+    #results{display:none;margin-top:16px}
+    #answers{background:var(--soft);padding:16px;border-radius:10px}
+    .answer-block{border-bottom:1px solid #ddd;padding:10px 0}
+    .right{color:green;font-weight:700}.wrong{color:red;font-weight:700}
+    #congrats{position:fixed;left:50%;top:20%;transform:translateX(-50%) scale(0);background:#fff;padding:18px 26px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.25);z-index:9999;text-align:center}
+    #congrats.show{animation:pop .55s forwards}
+    @keyframes pop{0%{transform:translateX(-50%) scale(0);opacity:0}60%{transform:translateX(-50%) scale(1.08);opacity:1}100%{transform:translateX(-50%) scale(1)}}
+    .floating-flower{position:fixed;top:-60px;font-size:30px;pointer-events:none;z-index:9998;animation:fall linear forwards}
+    @keyframes fall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(360deg);opacity:0}}
+    .meta{font-size:13px;color:#333;margin-top:6px}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>जयतु भारतम् &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;।।🌼🌼 योऽनूचानः स नो महान्  🌼🌼 ।।&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;जयतु संस्कृतम्</h1>
+</header>
+
+  <div class="wrap">
+    <div id="quiz"></div>
+
+    <div class="controls" style="margin-top:16px">
+      <button onclick="prevQuestion()">पुर्वप्रश्नः</button>
+      <button onclick="nextQuestion()">परप्रश्नः</button>
+      <button onclick="markReview()">पुनर्द्रष्टव्यः</button>
+      <button onclick="finishExam()">समाप्तिः</button>
+    </div>
+
+    <div class="status" id="status">प्रयत्नाः : ० | अनुत्तरितः : ० | पुनर्द्रष्टव्यः : ०</div>
+
+    <div id="results">
+      <h3>भवतः उत्तराणि</h3>
+      <div id="answers"></div>
+    </div>
+  </div>
+
+  <div id="congrats">
+    <div style="font-size:26px">🎉 अभिनन्दनम् ! 🎉</div>
+    <div style="margin-top:8px;color:#2c3e50;font-weight:700">✅ यथार्थं उत्तरम्</div>
+  </div>
+
+  <script>
+  const questions = [
+      {text:"पुंसां कः सुदुर्जयः शत्रुः ?", options:["क्रोधः","मोहः","लोभः","कामः"], answer:0},
+      {text:"कः शमः ?", options:["चित्तप्रशान्तता","मोहः","लोभः","कामः"], answer:0},
+      {text:"______ येन गतः सः पन्थाः ।", options:["महाजनः","लघुजनः","विद्वत्जनः","विज्ञजनः"], answer:0},
+      {text:"______ पचति यो गृहे ।", options:["शाकं","अन्नं","तण्डुलं","व्यञ्जनं"], answer:0},
+      {text:"कः पण्डितः ज्ञेयः ?", options:["धर्मज्ञः","कर्मज्ञः","मर्मज्ञः","तत्त्वज्ञः"], answer:0},
+      {text:"______ सुदुर्जयः पुंसां ।", options:["क्रोधः","लोभः","मोहः","क्षोभः"], answer:0},
+      {text:"मरिष्यतः मित्रं ______ ?", options:["दानम्","ज्ञानम्","मानम्","ध्यानम्"], answer:0},
+      {text:"संसार हेतुः ______ ।", options:["कामः","मत्सरः","लोभः","क्रोधः"], answer:0},
+      {text:"सर्वभूतहितः ______ ।", options:["साधुः","असाधुः","ज्ञानी","पण्डितः"], answer:0},
+      {text:"अनन्तक व्याधिः ______ ।", options:["लोभः","कामः","क्रोधः","दया"], answer:0},
+      {text:"द्वन्द्वसहिष्णुत्वं ______ ।", options:["क्षमा","क्रोधः","कामः","दया"], answer:0},
+      {text:"स्वधर्मवर्त्तित्वं ______ ।", options:["तपः","ध्यानम्","कर्म","कामः"], answer:0},
+      {text:"युधिष्ठिरस्य ज्ञान-वुद्धि परीक्षार्थम् कः प्रश्नान् अपृच्छत् ?", options:["यक्षः","द्रोणः","अर्जुनः","गुरुः"], answer:0},
+      {text:"अहनि अहनि ______ गच्छन्ति इह यमालयंम् ।", options:["भूतानि","प्राणिनः","जीवा:","पशवः"], answer:0},
+      {text:"तर्कः ______ ।", options:["अप्रतिष्ठः","प्रतिष्ठः","व्यापकः","युक्तिसंगतः"], answer:0},
+      {text:"श्रुतयः ______ ।", options:["विभिन्नाः","पञ्चविधः","चर्तुविधः","अनेक प्रकारः"], answer:0},
+      {text:"धर्मस्य तत्त्वं कुत्र निहितम् ?", options:["गुहायाम्","पुराणे","धर्मग्रन्थे","मन्दिरे"], answer:0},
+      {text:"महाजनः येन गतः सः ______ ।", options:["पन्थाः","विद्या","ज्ञानम्","मार्गः"], answer:0},
+      {text:"महाकालस्य पाकशालायां विभाण्डम् किम्?", options:["पृथ्विी","आकाशः","सूर्यः","जलम्"], answer:0},
+      {text:"महाकालस्य पाकशालायां किं पिधानम्  ?", options:["गगनम्","पृथिवी","सूर्याः","आकाशः"], answer:0},
+      {text:"भूतानि कालः पचतीति ______ ।", options:["वार्त्ता","वचनम्","कथा","गल्पम्"], answer:0},
+      {text:"भार्या कस्य मित्रम् ?", options:["गृहेसतः","मरिष्यतः","पुरुषस्य","आतुरस्य"], answer:0},
+      {text:"भिषङ् (वैद्यः) कस्य मित्रम् ?", options:["आतुरस्य","मरिष्यतः","गृहेसतः","पुरुषस्य"], answer:0},
+      {text:"दानं कस्य मित्रम् ?", options:["मरिष्यतः","आतुरस्य","पुरुषस्य","गृहेसतः"], answer:0},
+      {text:"विद्या कस्य मित्रम् ?", options:["प्रवसतः","मूर्खस्य","पण्डितस्य","आतुरस्य"], answer:0},
+      {text:"कः मोदते ?", options:["अनृणी च अप्रवासी च","यः कस्मै किमपि न ददाति","यः विदेशं न याति","यः भक्षणं करोति"], answer:0},
+      {text:"कः पन्था ?", options:["महाजन येन गतः सः पन्थाः","तर्कस्य मार्गः","धर्मस्य मार्गः","वैदिक मार्गः"], answer:0},
+      {text:"किं आश्चर्य्यम् ?", options:["शोषाः जीवितुम् इच्छन्ति","ताजमहल्","कोणार्कः","सर्वदा सुखकामना"], answer:0},
+      {text:"गृहायां किं निहितम् ?", options:["धर्मस्य तत्त्वम्","मुनेनाम् ॐकारः","वेदाः","ज्ञानम्"], answer:0},
+      {text:"किं ज्ञानम् ?", options:["तत्त्वार्थ सम्वोधः","शास्त्र पठनम्","धर्मस्य तत्त्व अवबोधनम्","वेद पठनम्"], answer:0},
+      {text:"'युधिष्ठिर यक्ष सम्वादः' इति विषयः कस्मात् आनीतः ?", options:["महाभारतस्य वनपर्वणः","रामायणात्","शान्तिपर्वणः","द्रोणपर्वणः"], answer:0},
+      {text:"प्रवासतः किं मित्रम् ?", options:["विद्या","दानम्","भार्य्या","वैद्यः"], answer:0},
+      {text:"गृहस्थस्य किं मित्रम् ?", options:["भार्य्या","दानम्","विद्या","वैद्यः"], answer:0},
+      {text:"आतुरस्य किं मित्रम् ?", options:["भिषङ्","दानम्","औषधिः","सुखाद्य भक्षणम्"], answer:0},
+      {text:"मारिष्यतः किं मित्रम् ?", options:["दानम्","यज्ञः","वैद्यः","हरिभजनम्"], answer:0},
+      {text:"कीदृशः पुरुषः मृतः स्यात् ?", options:["दरिद्रः पुरुषः","विवेकहीनः पुरुषः","धनहीन पुरुषः","ज्ञानहीन पुरुषः"], answer:0},
+      {text:"कीदृशं राष्ट्र मृतं भवेत् ?", options:["अराजकं राष्ट्रम्","क्षुद्र राष्ट्रम्","प्रगतिरहितं राष्ट्रम्","दुराचारी राष्ट्रम्"], answer:0},
+      {text:"कीदृशं श्राद्धं मृतं स्यात् ?", options:["अश्रोत्रियश्राद्धम्","अशुद्धश्राद्धम्","अदक्षिणश्राद्धम्","असमयश्राद्धम्"], answer:0},
+      {text:"कीदृशः यज्ञः मृतः भवेत् ?", options:["अदक्षिणः यज्ञः","अशुद्धं यज्ञः","असमय यज्ञः","अश्रोत्रिय यज्ञः"], answer:0},
+      {text:"तपसः लक्षणं किम् ?", options:["स्वधर्मवर्त्तित्वं","भगवतः स्मरणम्","मौनावस्थायां उपवेशनम्","हिन्दुधर्मस्य नियमं पालनम्"], answer:0},
+      {text:"कः अनन्तकः व्याधिः ?", options:["लोभः","मोहः","क्रोधः","हिंसा"], answer:0},
+      {text:"कः सुदूर्जयः शत्रुः ?", options:["क्रोधः","लोभः","मोहः","हिंसा"], answer:0},
+      {text:"कः साधुः स्मृतः ?", options:["सर्वभूतहितः","अन्यस्य प्रशंसां करोति","सुमिष्ट वचनं कथयति","अन्येषां उपकारं करोति"], answer:0},
+      {text:"कः असाधुः स्मृतः ?", options:["निर्दयः","दुष्टजनः","हिंसुकजनः","परश्रीकातरः जनः"], answer:0},
+      {text:"कः पण्डितः उच्यते ?", options:["धर्मज्ञः","ज्ञानी","सहृदयः","हिन्दुधर्म जानन्"], answer:0},
+      {text:"कः मुर्खः उच्यते ?", options:["नास्तिकः","आहितकारीजनः","अज्ञानी","क्रोधिजनः"], answer:0},
+      {text:"कः मत्सरः ?", options:["हृत्तापः","अन्यं प्रति शत्रुताचरणम्","अन्यं प्रति हिंसाचरणम्","क्रोधितःभावः"], answer:0},
+      {text:"कः दमः प्रकीर्तितः ?", options:["मनसः दमनम्","हृदयस्य दमनम्","इन्द्रिय दमनम्","स्वेच्छयाः दमनम्"], answer:0},
+      {text:"आर्जवं किम् उदाहृतम्?", options:["समचित्तता","मौनभावः","सहिष्णुभावः","द्रोहभावः"], answer:0},
+      {text:"का परा क्षमा प्रोक्ता ?", options:["द्वन्द्वसहिष्णुत्वम्","हृत्तापः उपशमनम्","मौनभावम्","अन्यस्य दोषस्य स्वीकारम्"], answer:0},
+      {text:"का परा दया प्रोक्ता ?", options:["सर्वसुखैषित्वम्","सर्वेषां मङ्गलकामना","समचित्तता","अन्यस्य दुःखेन दुःखीभावः"], answer:0},
+      {text:"______ तत्त्वार्थ सम्वोधः।", options:["ज्ञानम्","दानम्","ध्यानम्","मानः"], answer:0},
+      {text:"______ मूर्खः उच्यते।", options:["नास्तिकः","निर्जीव","निर्लिप्तः","निर्ममः"], answer:0},
+      {text:"कालः ______ पचति ।", options:["भूतानि","पापानि","भक्ष्याणि","अन्नानि"], answer:0},
+      {text:"शेषा ______ इच्छन्ति ?", options:["जीवितुम्","मर्तुं","पठितुं","भ्रमितुं"], answer:0},
+
+      // Sandhi—make 7 questions
+      {text:"रात्रिन्दिव + इन्धनेन = ?", options:["रात्रिन्दिवेन्धनेन","रात्रिविवन्धेनेन","रात्रिन्धिवन्धेनेन","रात्रिंदिवन्धनेन"], answer:0},
+      {text:"व्याधीः + अनन्तकः = ?", options:["व्याधीरनन्तकः","व्याधीअनन्तकः","व्याधीरनन्तक","व्याधीअनन्तक"], answer:0},
+      {text:"प्र + उक्ता = ?", options:["प्रोक्ता","प्रउक्त","प्रउक्ता","प्रौक्ता"], answer:0},
+      {text:"सुख + एषित्वम् = ?", options:["सुखैषित्वम्","सुखेषित्वम्","सुखैषितम्","सुखेषित्वं"], answer:0},
+      {text:"कः + च = ?", options:["कश्च","कश्च:","कष्ट","कसच"], answer:0},
+      {text:"दुः + जयः = ?", options:["दुर्जयः","दुजयः","दूर्जयः","दुर्जय"], answer:0},
+      {text:"न + एकः = ?", options:["नैकः","नेकः","नैक","नेक"], answer:0},
+
+      // Sandhi Viccheda — 8 questions
+      {text:"अहन्यहनि = ?", options:["अहनि + अहनि","अहनी + अहनि","अहनि + अहनी","अहन्य + हनि"], answer:0},
+      {text:"नैकः = ?", options:["न + एकः","न + रोकः","ना + इकः","ना + एकः"], answer:0},
+      {text:"पचतीति = ?", options:["पचति + इति","पचती + इतिः","पचती + ईति","पचति + ईति"], answer:0},
+      {text:"साधुरसाधुः = ?", options:["साधुः + असाधुः","साधु + रसाधुः","साधु + असाधुः","साधुः + असाधु"], answer:0},
+      {text:"मासर्तुः = ?", options:["मास + ऋर्तुः","मास + ऋतु","मास + उतुः","मास + ऋतुः"], answer:0},
+      {text:"हृत्तापः = ?", options:["हृत् + तापः","हृद् + तापः","हृद + तापः","हृत् + त्तापः"], answer:0},
+      {text:"जीवितुमिच्छन्ति = ?", options:["जीवितुम् + इच्छन्ति","जीवितुं + मिच्छन्ति","जीवितु + इच्छन्ति","जिवितुम् + इच्छन्ति"], answer:0},
+      {text:"शमश्च = ?", options:["शमः + च","शम + श्च","शमाः + श्च","शमः + श्व"], answer:0}
+    ];
+// -------------------------
+    // Utility: Fisher-Yates shuffle
+    // -------------------------
+    function shuffleArray(arr){
+      for(let i=arr.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [arr[i],arr[j]]=[arr[j],arr[i]];
+      }
+      return arr;
+    }
+
+    // Shuffle questions order (no repeats)
+    shuffleArray(questions);
+
+    // For each question: shuffle options and update answer index
+    questions.forEach(q=>{
+      const correct = q.options[q.answer];
+      shuffleArray(q.options);
+      q.answer = q.options.indexOf(correct);
+    });
+
+
+  // Sanskrit digit converter
+  function toSanskritNum(num){
+    const d=['०','१','२','३','४','५','६','७','८','९'];
+    return String(num).split('').map(x=>d[x]).join('');
+  }
+
+  // Render quiz
+  const quizContainer=document.getElementById('quiz');
+  questions.forEach((q,i)=>{
+    const d=document.createElement('div');
+    d.className='question';
+    d.id='q'+(i+1);
+    const qNum=toSanskritNum(i+1);
+    const total=toSanskritNum(questions.length);
+    d.innerHTML=`
+      <div class="qtitle"><strong>प्रश्नः ${qNum}.</strong> ${q.text}</div>
+      <div class="options">
+        ${q.options.map((opt,ji)=>`<div class="opt" data-index="${ji}" onclick="selectOption(${i+1}, this)">${opt}</div>`).join('')}
+      </div>
+      <div class="meta">प्रश्नः ${qNum} / ${total}</div>
+    `;
+    quizContainer.appendChild(d);
+  });
+
+  // State
+  let current=1, answersMap={}, marked=0;
+
+  function showQuestion(n){
+    document.querySelectorAll('.question').forEach(el=>el.style.display='none');
+    const el=document.getElementById('q'+n);
+    if(el) el.style.display='block';
+    current=n;
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function updateStatus(){
+    const attempted=Object.keys(answersMap).length;
+    const notAttempted=questions.length-attempted;
+    document.getElementById('status').innerText=
+      `प्रयत्नाः : ${toSanskritNum(attempted)} | अनुत्तरितः : ${toSanskritNum(notAttempted)} | पुनर्द्रष्टव्यः : ${toSanskritNum(marked)}`;
+  }
+
+  function selectOption(qNum,el){
+    document.querySelectorAll(`#q${qNum} .opt`).forEach(o=>o.classList.remove('selected'));
+    el.classList.add('selected');
+    answersMap[qNum]=el.innerText.trim();
+    if(el.innerText.trim()===questions[qNum-1].options[questions[qNum-1].answer]){
+      triggerCongrats();
+    }
+    updateStatus();
+  }
+
+  function prevQuestion(){if(current>1)showQuestion(current-1);}
+  function nextQuestion(){if(current<questions.length)showQuestion(current+1);}
+  function markReview(){marked++;updateStatus();}
+
+  // congrats popup + floating flowers (one-time small shower each correct selection)
+    function triggerCongrats(){
+      const popup = document.getElementById('congrats');
+      popup.classList.add('show');
+      setTimeout(()=>popup.classList.remove('show'),1800);
+
+      // spawn flowers
+      for(let i=0;i<12;i++){
+        const f = document.createElement('div');
+        f.className = 'floating-flower';
+        const petals = ['🌸','🌺','🌼','💐','🌷'];
+        f.innerText = petals[Math.floor(Math.random()*petals.length)];
+        f.style.left = (5 + Math.random()*90) + 'vw';
+        f.style.fontSize = (18 + Math.random()*26) + 'px';
+        // random duration and delay
+        const dur = 3 + Math.random()*2.5;
+        f.style.animationDuration = dur + 's';
+        f.style.animationDelay = (Math.random()*0.3) + 's';
+        document.body.appendChild(f);
+        setTimeout(()=>f.remove(), (dur+0.4)*1000 + 600);
+      }
+    }
+
+  function finishExam(){
+    let correctCount=0,html='';
+    for(let i=0;i<questions.length;i++){
+      const qNum=i+1,q=questions[i],correct=q.options[q.answer];
+      const given=answersMap[qNum]||null;
+      const ok=given!==null && given===correct;
+      if(ok)correctCount++;
+      html+=`<div class="answer-block">
+        <div><strong>प्रश्नः ${toSanskritNum(qNum)}.</strong> ${q.text}</div>
+        <p>दत्त उत्तरः: <span class="${ok?'right':'wrong'}">${given||'न दत्त'}</span></p>
+        <p>समीचीन उत्तरः: <strong>${correct}</strong></p>
+      </div>`;
+    }
+    const summary=`<div class="summary">योगफलम् : ${toSanskritNum(correctCount)} / ${toSanskritNum(questions.length)}</div>`;
+    document.getElementById('answers').innerHTML=summary+html;
+    document.getElementById('quiz').style.display='none';
+    document.getElementById('results').style.display='block';
+  }
+
+  showQuestion(1);
+  updateStatus();
+  </script>
+</body>
+</html>

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="sa">
+<head>
+  <meta charset="utf-8" />
+  <title>सिंहशृगालशिशुकथा (ସଂସ୍କୃତ)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root{--orange:#d35400;--soft:#fff3e0;--btn:#e67e22}
+    body{margin:0;font-family:"Noto Sans Devanagari",sans-serif;background:orange;color:#222}
+    header{background:var(--orange);color:#fff;padding:6px 8px;text-align:center}
+    h1{margin:0;font-size:16px;animation:glow 6s infinite}
+    @keyframes glow{
+      0%{color:#fff;text-shadow:0 0 8px crimson}
+      25%{color:#ffeb3b;text-shadow:0 0 10px green}
+      50%{color:#00bcd4;text-shadow:0 0 10px blue}
+      75%{color:#e91e63;text-shadow:0 0 10px purple}
+      100%{color:#fff;text-shadow:0 0 8px crimson}
+    }
+    h2{margin:4px 0 0 0;font-size:18px;opacity:1;animation:fade 3s infinite}
+    @keyframes fade{0%,45%{opacity:0}50%,95%{opacity:1}100%{opacity:0}}
+    .wrap{padding:8px;max-width:750px;margin:0 auto}
+    .question{background:var(--soft);border-radius:12px;padding:12px;margin:14px auto;box-shadow:0 4px 10px rgba(0,0,0,.18);max-width:720px auto;text-align:center;display:none}
+    .qtitle{font-size:32px;font-weight:bold;margin-bottom:12px}
+    .options{display:flex;flex-direction:column;gap:8px;align-items:center; font-size:40px}
+    .opt{width:100%;max-width:500px;background:#f8c471;padding:6px;border-radius:12px;cursor:pointer;transition:transform .15s,background .15s;box-shadow:0 2px 6px rgba(0,0,0,.08);text-align:center}
+    .opt:hover{transform:scale(1.02);background:#f5b041}
+    .opt.selected{background:#d35400;color:#fff;font-weight:700}
+    .controls{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+    .controls button{background:var(--btn);color:#fff;border:none;padding:2px 10px;border-radius:10px;cursor:pointer}
+    .controls button:hover{filter:brightness(.95)}
+    .status{margin:10px auto;text-align:center;font-weight:700}
+    #results{display:none;margin-top:16px}
+    #answers{background:var(--soft);padding:16px;border-radius:10px}
+    .answer-block{border-bottom:1px solid #ddd;padding:10px 0}
+    .right{color:green;font-weight:700}.wrong{color:red;font-weight:700}
+    #congrats{position:fixed;left:50%;top:20%;transform:translateX(-50%) scale(0);background:#fff;padding:18px 26px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.25);z-index:9999;text-align:center}
+    #congrats.show{animation:pop .55s forwards}
+    @keyframes pop{0%{transform:translateX(-50%) scale(0);opacity:0}60%{transform:translateX(-50%) scale(1.08);opacity:1}100%{transform:translateX(-50%) scale(1)}}
+    .floating-flower{position:fixed;top:-60px;font-size:30px;pointer-events:none;z-index:9998;animation:fall linear forwards}
+    @keyframes fall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(360deg);opacity:0}}
+    .meta{font-size:13px;color:#333;margin-top:6px}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>जयतु भारतम् &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;।।🌼🌼 योऽनूचानः स नो महान्  🌼🌼 ।।&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;जयतु संस्कृतम्</h1>
+    <h2></h2>
+  </header>
+
+  <div class="wrap">
+    <div id="quiz"></div>
+
+    <div class="controls" style="margin-top:16px">
+      <button onclick="prevQuestion()">पुर्वप्रश्नः</button>
+      <button onclick="nextQuestion()">परप्रश्नः</button>
+      <button onclick="markReview()">पुनर्द्रष्टव्यः</button>
+      <button onclick="finishExam()">समाप्तिः</button>
+    </div>
+
+    <div class="status" id="status">प्रयत्नाः : ० | अनुत्तरितः : ० | पुनर्द्रष्टव्यः : ०</div>
+
+    <div id="results">
+      <h3>भवतः उत्तराणि</h3>
+      <div id="answers"></div>
+    </div>
+  </div>
+
+  <div id="congrats">
+    <div style="font-size:26px">🎉 अभिनन्दनम् ! 🎉</div>
+    <div style="margin-top:8px;color:#2c3e50;font-weight:700">✅ यथार्थं उत्तरम्</div>
+  </div>
+
+  <script>
+  const questions =  [
+  {text:"सिंहशृगालशिशुकथा कस्मात् पुस्तकात् आनीताः ?", options:["हितोपदेशात्","महाभारतात्","रामायणात्","पञ्चतन्त्रात्"], answer:3},
+  {text:"सिंहशृगालशिशुकथा केन बिरचिता ?", options:["महर्षिब्यासेन","महर्षि वाल्मिकीना","महाकविकालिदासेन","विष्णुशर्मणा"], answer:3},
+  {text:"कस्मिंश्चिद् देशे कौ प्रतिवसतः स्म ?", options:["मृगसिंह्यौ","सिंहदंपती","मृगशृगालौ","काकौ"], answer:1},
+  {text:"सिंहः कान् व्यापाद्य सिंहै ददाति ?", options:["हरिणान्","शशकान्","मृगान्","गजान्"], answer:2},
+  {text:"सिंहेन स्वगृहमागच्छता कः प्राप्तः ?", options:["शृगालशिशुः","मृगशिशुः","भल्लुकशिशुः","गजशिशुः"], answer:0},
+  {text:"इदानीं त्वमेनं भक्षयित्वा _____ कुरु ।", options:["खाद्यं","भोज्यं","पानं","पथ्यं"], answer:3},
+  {text:"कदा रविरस्तं गतः ?", options:["सिंहस्य जनपदे भ्रमतः अपि","सिंहस्य वने भ्रमतः अपि","व्याघ्रः वने भ्रमतः अपि","सिंहीवने भ्रमतः अपि"], answer:1},
+  {text:"कथं सिंहः शृगालं जीवन्तमेव समर्पितवान् ?", options:["क्षुद्रत्वात्","अस्पृश्यत्वात्","वालोऽयमिति मत्वा","शृगालः इति मत्वा"], answer:2},
+  {text:"त्रयोऽपि शिशवः किमजानन्तः एकचारविहाराः वाल्यसमयं निर्वाहयन्ति स्म ?", options:["धर्मविशेषं","विचारविशेषं","जातिविशेषं","वर्णविशेषं"], answer:2},
+
+  {text:"कदा अकृत्यं नैव कर्त्तव्यम् ?", options:["प्राणत्यागेऽपि संस्थिते","जीवनत्यागेऽपि संस्थिते","मृत्युकाले","विपदि"], answer:0},
+  {text:"अकृत्यं 'नैव कर्तब्य' _____ संस्थिते ।", options:["जीवनदानेऽपि","प्राणत्यागेऽपि","धनत्यागेऽपि","यशत्यागेऽपि"], answer:1},
+  {text:"न च कृत्यं परित्याज्यं धर्म एषः _____ ।", options:["सनातनः","हिन्दु","मुसलमान्","खिरस्तान"], answer:0},
+  {text:"के एकाचारविहारा वाल्यसमयं निर्वाहयन्ति स्म ?", options:["ते त्रयः शिशवः","मानवाः","शिशवः","अपत्यानि"], answer:0},
+  {text:"कस्य अभिमुखं न गन्तव्यम् ?", options:["सिंहस्य","व्याघ्रस्य","भल्लुकस्य","गजस्य"], answer:3},
+  {text:"सिंहशिशौ कस्मात् निरुत्साहतां गतौ ?", options:["मृगस्य भंगात्","ज्येष्ठ वान्धवस्य भंगात्","सिंहस्य भंगात्","भल्लुकस्य भंगात्"], answer:1},
+  {text:"कं दृष्ट्वा शृगालशिशुः दूरतः नष्टः ?", options:["सिंहं","भल्लुकं","गजं","मृगं"], answer:2},
+  {text:"कया एकान्ते नीत्वा शृगालशिशुः प्रवोधितः ?", options:["सिंह्या","व्याघ्र्या","भल्लुकेन","शृगालेन"], answer:0},
+  {text:"बत्स ! एवं कदाचित् _____ जल्प ।", options:["न","एवं","मा","नहि"], answer:2},
+  {text:"एतौ भवदीयौ _____ ।", options:["ज्येष्ठभातरौ","भ्रातरौ","स्वसारौ","लघु भ्रातरौ"], answer:3},
+  {text:"तन्मया अवश्यमेतौ _____ ।", options:["व्यापादनीयौ","हन्तव्यौ","नेतव्यौ","दर्शनीयौ"], answer:0},
+
+  {text:"यस्मिन् कुले त्वमुत्पन्नो _____ तत्र न हन्यते।", options:["सिंहः","गजः","भल्लुकः","व्याघ्रः"], answer:1},
+  {text:"वत्स ! त्वं _____ ।", options:["शृगालसुतः","शृगालपुत्रः","शृगालीसुतः","व्याघ्रीसुतः"], answer:2},
+  {text:"केन शृगालसुतः पुष्टिं नीतः ?", options:["खाद्येन","पुष्टिकरखाद्येन","मांसेन","सिंह्याः स्तनक्षीरेण"], answer:3},
+  {text:"शृगालशिशुः केन सह मिलितः ?", options:["वन्धुना","स्वजात्या","मात्रा","पित्रा"], answer:1},
+  {text:"गजः कुत्र न हन्यते ?", options:["व्याघ्रकुले","यस्मिन् कुले शृगालशिशुः उत्पन्नः","भल्लुककुले","मृगकुले"], answer:1},
+  {text:"शृगालशिशुः भयव्याकुलमनाः किमकरोत् ?", options:[" मिलितः","शनैः शनैः स्वजात्या मिलितः","द्रुतवेगेन पलायितः","द्रुतवेगेन  मिलितः"], answer:1},
+
+  {text:"नित्यम् + एव = _____ ।", options:["नित्येब","नित्यमेव","नित्यमैव","नित्यमाब"], answer:1},
+  {text:"भ्रमतः + अपि = _____ ।", options:["भ्रमतोऽपि","भ्रमतापि","भ्रमतपि","भ्रमतोपि"], answer:0},
+  {text:"प्रभाते + अन्यत् = _____ ।", options:["प्रभातेन्यत्","प्रभातैन्यत्","प्रभातेऽन्यत्","प्रभातैनत्"], answer:2},
+  {text:"बालः + अयम् = _____ ।", options:["वालोयं","वालायं","वालोऽऽयं","वालोऽयम्"], answer:3},
+  {text:"सिंहः + आह = _____ ।", options:["सिंहआह","सिहोह","सिंहोऽह","सिंहः आह"], answer:0},
+  {text:"उक्तम् + च = _____ ।", options:["उक्तंच","उक्तञ्च","उक्तच","उक्तोच"], answer:1},
+  {text:"धर्मः + एषः = _____ ।", options:["धमैषः","धमेषः","धर्मोष","धर्म एषः"], answer:3},
+  {text:"मम + अयम् = _____ ।", options:["ममायम्","ममयं","ममाऽयं","ममोयं"], answer:0},
+  {text:"अथ + असौ = _____ ।", options:["अथसौ","अथऽसौ","अथासौ","अथाऽऽसौ"], answer:2},
+  {text:"माम् + उपहसतः = _____ ।", options:["मामुपहसत","मामुपहसतः","मामोपहतत","मामोहसत"], answer:1},
+  {text:"अवश्यम् + एतौ = _____ ।", options:["अवश्यएतौ","अवश्यमेतौ","अवश्यमैतौ","अवश मेतौ"], answer:1},
+  {text:"निः + उत्साहताम् = _____ ।", options:["निरुत्साहताम्","निरूत्साह ताम्","निरोध्साहताम्","निरौत्साहतम्"], answer:0},
+  {text:"अन्तः + विहस्य = _____ ।", options:["अन्तर्विहस्य","अन्तविहस्य","अन्तोर्विहस्य","अन्तोविहस्य"], answer:0},
+  {text:"त्वम् + उत्पन्नः = _____ ।", options:["त्वमत्पन्नः","त्वमौत्पन्न","त्वमोत्पन्न","त्वमुत्पन्नः"], answer:3},
+
+  {text:"सिंहोऽपि = ____ + ____ ।", options:["सिंह + अपि","सिंहः + अपि","सिंहः + आपि","सिंहः + पि"], answer:1},
+  {text:"रविरस्तम् = ____ + ____ ।", options:["रवि + अस्तम्","रवि + रस्तम्","रविः + अस्तम्","रविः + आस्तम्"], answer:2},
+  {text:"अन्यस्मिन्नहनि = ____ + ____ ।", options:["अन्यस्मिन् + अहनि","अन्यस्मिं + अहनि","अन्यस्मि + नहनि","अन्यस्मिना + अहनि"], answer:0},
+  {text:"जीवन्तमेव = ____ + ____ ।", options:["जीवन्त + मेव","जीवन्त + एव","जीवन्तम् + एव","जीवन्तः + मेव"], answer:2},
+  {text:"द्वावपि = ____ + ____ ।", options:["द्वा + अपि","द्वौ + अपि","द्वे + अपि","दो + अपि"], answer:1},
+  {text:"तावत्तेन = ____ + ____ ।", options:["ताव + त्तेन","तावन् + तेन","तावात् + तेनम्","तावत् + तेन"], answer:3},
+  {text:"एवमुक्त्वा = ____ + ____ ।", options:["एवम् + उक्त्वा","एव + मुक्त्वा","एवम + उक्त्वा","एवाम + उक्त्वा"], answer:0},
+  {text:"तन्न = ____ + ____ ।", options:["त + न","तद् + न्न","तद् + न","तत् + न"], answer:3},
+  {text:"तावपि = ____ + ____ ।", options:["ता + वपि","तव + अपि","तु + अपि","तौ + अपि"], answer:3},
+  {text:"पित्रोरग्रतः = ____ + ____ ।", options:["पित्रो + रग्रतः","पित्रो + अग्रतः","पित्रोः + अग्रतः","पित्रो + ग्रतः"], answer:2}, 
+
+  {text:"सिंहोऽपि मृगान् व्यापाद्य <u>सिंह्यै</u> ददाति ।", options:["दानार्थे चतुर्थी","निमित्तार्थे चतुर्थी","निवेदनार्थे चतुर्थी","प्रयोगार्थे चतुर्थी"], answer:1},
+  {text:"<u>तेन</u> किमपि सत्वं नासादितम् ।", options:["अनुक्ते कर्त्तरि तृतीया","करणे तृतीया","सहार्थे तृतीया","हीन अर्थे तृतीया"], answer:0},
+  {text:"वने भ्रमतोऽपि <u>तस्य</u> राविरस्तं गतः ।", options:["अनादरे षष्ठी","सम्बन्धविवक्षायां षष्ठी","कृद्योगे षष्ठी","सम्बन्धे षष्ठी"], answer:2},
+  {text:"त्वम् <u>एनं</u> भक्षयित्वा पथ्यं कुरु ।", options:["विनायोगे द्वितीया","कर्मणि द्वितीया","प्रतिशब्दयोगे द्वितीया","क्रियाविशेषणे द्वितीया"], answer:1},
+  {text:"तेन <u>शृगालसुतेन</u> अभिहितम् ।", options:["हीनयोगे तृतीया","प्रकृत्यादिभ्यः तृतीया","अनुक्ते कर्त्तरि तृतीया","प्रयोजनार्थे तृतीया"], answer:2},
+  {text:"तौ <u>पित्रोः</u> अग्रतः ऊचतुः ।", options:["अनादरे षष्ठी","सम्बन्धे षष्ठी","कृद्योगे षष्ठी","अग्रतः योगे षष्ठी"], answer:3},
+  {text:"किमहमेताभ्यां <u>रूपेण</u> हीनः ।", options:["हेतु अर्थे तृतीया","ऊनार्थकशब्दयोगे तृतीया","अनुक्ते कर्त्तरि तृतीया","प्रयोजनार्थे तृतीया"], answer:1},
+  {text:"तत् <u>मया</u> अवश्यमेतौ व्यापादनीयौ ।", options:["सहार्थे तृतीया","अनुक्ते कर्तरि तृतीया","हेतौ तृतीया","करणे तृतीया"], answer:1},
+  {text:"<u>गजः</u> तत्र न हन्यते ।", options:["इतीयोगे तृतीया","उक्ते कर्मणि प्रथमा","कर्त्तरि प्रथमा","अव्यययोगे प्रथमा"], answer:1},
+  {text:"<u>कृपया</u> मया स्वस्तनक्षीरेण पुष्टिं नीतः ।", options:["प्रकृत्यादिभ्यः तृतीया","करणे तृतीया","अनुक्ते कर्त्तरि तृतीया","हीनयोगे तृतीया"], answer:0},
+  
+  {text:"कस्मिंश्चित् <u>देशे</u>  सिंहदम्पती प्रतिवसतः स्म ।", options:["कालाधिकरणे सप्तमी","स्थानाधिकरणे सप्तमी","विषयाधिकरणे सप्तमी","भावे सप्तमी"], answer:1},
+  {text:"पुत्रद्वयम्", options:["पुत्राणां द्वयम्","पुत्रयोः द्वयम्","पुत्रेभ्यः द्वयम्","पुत्रस्य द्वयम्"], answer:1},
+  {text:"शृगाल्याः शिशुः", options:["शृगालीशिशुः","शृगालाशिशुः","शृगाल्याशिशुः","शृगालशिशुना"], answer:0},
+  {text:"दम्पती", options:["द्वन्द्वः","कर्मधारयः","बहुव्रीहि","द्विगु"], answer:0},
+  {text:"माता च पिता च तयोः", options:["पितुः","पित्रोः","पितृणाम्","पितरि"], answer:1},
+  {text:"मत्पुत्रौ", options:["मयि पुत्रौ","मम पुत्रौ","मदीयौ पुत्रौ","मह्यं पुत्रौ"], answer:1},
+  {text:"कोपेन आविष्टः", options:["कोपाविष्टेन","कोपाविष्टः","कोपाविष्टस्य","कोपाविष्ट"], answer:1},
+  {text:"मृत्युपथम्", options:["द्विगुः","द्वन्द्व","कर्मधारयः","षष्ठीतत्पुरुषः"], answer:3},
+  {text:"अकृत्यम्", options:["नास्ति कृत्यम्","न कृत्यम्","न एव कृत्यम्","नास्ति एव कृत्यम्"], answer:1},
+  {text:"विद्यायाः अभ्यासः तेन", options:["विद्याभ्यासः","विद्याभ्यासेन","विद्याभ्यासस्य","विद्याभ्यास"], answer:1}
+
+]; 
+// -------------------------
+    // Utility: Fisher-Yates shuffle
+    // -------------------------
+    function shuffleArray(arr){
+      for(let i=arr.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [arr[i],arr[j]]=[arr[j],arr[i]];
+      }
+      return arr;
+    }
+
+    // Shuffle questions order (no repeats)
+    shuffleArray(questions);
+
+    // For each question: shuffle options and update answer index
+    questions.forEach(q=>{
+      const correct = q.options[q.answer];
+      shuffleArray(q.options);
+      q.answer = q.options.indexOf(correct);
+    });
+
+
+  // Sanskrit digit converter
+  function toSanskritNum(num){
+    const d=['०','१','२','३','४','५','६','७','८','९'];
+    return String(num).split('').map(x=>d[x]).join('');
+  }
+
+  // Render quiz
+  const quizContainer=document.getElementById('quiz');
+  questions.forEach((q,i)=>{
+    const d=document.createElement('div');
+    d.className='question';
+    d.id='q'+(i+1);
+    const qNum=toSanskritNum(i+1);
+    const total=toSanskritNum(questions.length);
+    d.innerHTML=`
+      <div class="qtitle"><strong>प्रश्नः ${qNum}.</strong> ${q.text}</div>
+      <div class="options">
+        ${q.options.map((opt,ji)=>`<div class="opt" data-index="${ji}" onclick="selectOption(${i+1}, this)">${opt}</div>`).join('')}
+      </div>
+      <div class="meta">प्रश्नः ${qNum} / ${total}</div>
+    `;
+    quizContainer.appendChild(d);
+  });
+
+  // State
+  let current=1, answersMap={}, marked=0;
+
+  function showQuestion(n){
+    document.querySelectorAll('.question').forEach(el=>el.style.display='none');
+    const el=document.getElementById('q'+n);
+    if(el) el.style.display='block';
+    current=n;
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function updateStatus(){
+    const attempted=Object.keys(answersMap).length;
+    const notAttempted=questions.length-attempted;
+    document.getElementById('status').innerText=
+      `प्रयत्नाः : ${toSanskritNum(attempted)} | अनुत्तरितः : ${toSanskritNum(notAttempted)} | पुनर्द्रष्टव्यः : ${toSanskritNum(marked)}`;
+  }
+
+  function selectOption(qNum,el){
+    document.querySelectorAll(`#q${qNum} .opt`).forEach(o=>o.classList.remove('selected'));
+    el.classList.add('selected');
+    answersMap[qNum]=el.innerText.trim();
+    if(el.innerText.trim()===questions[qNum-1].options[questions[qNum-1].answer]){
+      triggerCongrats();
+    }
+    updateStatus();
+  }
+
+  function prevQuestion(){if(current>1)showQuestion(current-1);}
+  function nextQuestion(){if(current<questions.length)showQuestion(current+1);}
+  function markReview(){marked++;updateStatus();}
+
+  // congrats popup + floating flowers (one-time small shower each correct selection)
+    function triggerCongrats(){
+      const popup = document.getElementById('congrats');
+      popup.classList.add('show');
+      setTimeout(()=>popup.classList.remove('show'),1800);
+
+      // spawn flowers
+      for(let i=0;i<12;i++){
+        const f = document.createElement('div');
+        f.className = 'floating-flower';
+        const petals = ['🌸','🌺','🌼','💐','🌷'];
+        f.innerText = petals[Math.floor(Math.random()*petals.length)];
+        f.style.left = (5 + Math.random()*90) + 'vw';
+        f.style.fontSize = (18 + Math.random()*26) + 'px';
+        // random duration and delay
+        const dur = 3 + Math.random()*2.5;
+        f.style.animationDuration = dur + 's';
+        f.style.animationDelay = (Math.random()*0.3) + 's';
+        document.body.appendChild(f);
+        setTimeout(()=>f.remove(), (dur+0.4)*1000 + 600);
+      }
+    }
+
+  function finishExam(){
+    let correctCount=0,html='';
+    for(let i=0;i<questions.length;i++){
+      const qNum=i+1,q=questions[i],correct=q.options[q.answer];
+      const given=answersMap[qNum]||null;
+      const ok=given!==null && given===correct;
+      if(ok)correctCount++;
+      html+=`<div class="answer-block">
+        <div><strong>प्रश्नः ${toSanskritNum(qNum)}.</strong> ${q.text}</div>
+        <p>दत्त उत्तरः: <span class="${ok?'right':'wrong'}">${given||'न दत्त'}</span></p>
+        <p>समीचीन उत्तरः: <strong>${correct}</strong></p>
+      </div>`;
+    }
+    const summary=`<div class="summary">योगफलम् : ${toSanskritNum(correctCount)} / ${toSanskritNum(questions.length)}</div>`;
+    document.getElementById('answers').innerHTML=summary+html;
+    document.getElementById('quiz').style.display='none';
+    document.getElementById('results').style.display='block';
+  }
+
+  showQuestion(1);
+  updateStatus();
+  </script>
+</body>
+</html>
