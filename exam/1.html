@@ -26,7 +26,7 @@
     .opt:hover{transform:scale(1.02);background:#f5b041}
     .opt.selected{background:#d35400;color:#fff;font-weight:700}
     .controls{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10px}
-    .controls button{background:var(--btn);color:#fff;border:none;padding:2px 10px;border-radius:10px;cursor:pointer}
+    .controls button{background:var(--btn);color:#fff;border:none;padding:2px 20px;border-radius:10px;cursor:pointer}
     .controls button:hover{filter:brightness(.95)}
     .status{margin:10px auto;text-align:center;font-weight:700}
     #results{display:none;margin-top:16px}
@@ -51,13 +51,13 @@
     <div id="quiz"></div>
 
     <div class="controls" style="margin-top:16px">
-      <button onclick="prevQuestion()">पुर्वप्रश्नः</button>
-      <button onclick="nextQuestion()">परप्रश्नः</button>
-      <button onclick="markReview()">पुनर्द्रष्टव्यः</button>
+      <button onclick="prevQuestion()">⬅️ पुर्वप्रश्नः </button>
+      <button onclick="nextQuestion()">परप्रश्नः ➡️</button>
+    
       <button onclick="finishExam()">समाप्तिः</button>
     </div>
 
-    <div class="status" id="status">प्रयत्नाः : ० | अनुत्तरितः : ० | पुनर्द्रष्टव्यः : ०</div>
+    <div class="status" id="status">प्रयत्नाः : ० | अनुत्तरितः : ०</div>
 
     <div id="results">
       <h3>भवतः उत्तराणि</h3>
@@ -187,7 +187,7 @@
   });
 
   // State
-  let current=1, answersMap={}, marked=0;
+  let current=1, answersMap={};
 
   function showQuestion(n){
     document.querySelectorAll('.question').forEach(el=>el.style.display='none');
@@ -201,7 +201,7 @@
     const attempted=Object.keys(answersMap).length;
     const notAttempted=questions.length-attempted;
     document.getElementById('status').innerText=
-      `प्रयत्नाः : ${toSanskritNum(attempted)} | अनुत्तरितः : ${toSanskritNum(notAttempted)} | पुनर्द्रष्टव्यः : ${toSanskritNum(marked)}`;
+      `प्रयत्नाः : ${toSanskritNum(attempted)} | अनुत्तरितः : ${toSanskritNum(notAttempted)}`;
   }
 
   function selectOption(qNum,el){
@@ -216,7 +216,7 @@
 
   function prevQuestion(){if(current>1)showQuestion(current-1);}
   function nextQuestion(){if(current<questions.length)showQuestion(current+1);}
-  function markReview(){marked++;updateStatus();}
+  
 
   // congrats popup + floating flowers (one-time small shower each correct selection)
     function triggerCongrats(){
