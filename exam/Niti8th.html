@@ -49,14 +49,21 @@
   <div class="wrap">
     <div id="quiz"></div>
 
-    <div class="controls" style="margin-top:18px">
-      <button onclick="prevQuestion()">पुर्वप्रश्नः</button>
-      <button onclick="nextQuestion()">परप्रश्नः</button>
-      <button onclick="markReview()">पुनर्द्रष्टव्यः</button>
-      <button onclick="finishExam()">समाप्तिः </button>
+    <div class="controls" style="margin-top:16px">
+      <button onclick="prevQuestion()">⬅️ पुर्वप्रश्नः </button>
+      <button onclick="nextQuestion()">परप्रश्नः ➡️</button>
+    
+      <button onclick="finishExam()">समाप्तिः</button>
     </div>
 
-    <div class="status" id="status">प्रयत्नाः: 0 | अनुत्तरितः: 0 | पुनर्द्रष्टव्यः: 0</div>
+    <div class="status" id="status">प्रयत्नाः : ० | अनुत्तरितः : ०</div>
+
+    <div id="results">
+      <h3>भवतः उत्तराणि</h3>
+      <div id="answers"></div>
+    </div>
+  </div>
+
 
     <div id="results">
       <h3>भवतः उत्तराणि</h3>
@@ -107,79 +114,64 @@
       q.answer = q.options.indexOf(correct);
     });
 
-    // render quiz DOM
-    const quizContainer = document.getElementById('quiz');
-    questions.forEach((q,i)=>{
-      const d = document.createElement('div');
-      d.className = 'question';
-      d.id = 'q'+(i+1);
-      d.innerHTML = `
-        <div class="qtitle"><strong>Q${i+1}.</strong> ${q.text}</div>
-        <div class="options">
-          ${q.options.map((opt,ji)=>`<div class="opt" data-index="${ji}" onclick="selectOption(${i+1}, this)">${opt}</div>`).join('')}
-        </div>
-        <div class="meta" style="margin-top:10px">प्रश्न ${i+1} / ${questions.length}</div>
-      `;
-      quizContainer.appendChild(d);
-    });
 
-    // state
-    let current = 1;
-    let answersMap = {}; // qNum -> text
-    let marked = 0;
+  // Sanskrit digit converter
+  function toSanskritNum(num){
+    const d=['०','१','२','३','४','५','६','७','८','९'];
+    return String(num).split('').map(x=>d[x]).join('');
+  }
 
-    // show first
-    function showQuestion(n){
-      document.querySelectorAll('.question').forEach(el=>el.style.display='none');
-      const el = document.getElementById('q'+n);
-      if(el) el.style.display='block';
-      current = n;
-      window.scrollTo({top:0,behavior:'smooth'});
+  // Render quiz
+  const quizContainer=document.getElementById('quiz');
+  questions.forEach((q,i)=>{
+    const d=document.createElement('div');
+    d.className='question';
+    d.id='q'+(i+1);
+    const qNum=toSanskritNum(i+1);
+    const total=toSanskritNum(questions.length);
+    d.innerHTML=`
+      <div class="qtitle"><strong>प्रश्नः ${qNum}.</strong> ${q.text}</div>
+      <div class="options">
+        ${q.options.map((opt,ji)=>`<div class="opt" data-index="${ji}" onclick="selectOption(${i+1}, this)">${opt}</div>`).join('')}
+      </div>
+      <div class="meta">प्रश्नः ${qNum} / ${total}</div>
+    `;
+    quizContainer.appendChild(d);
+  });
+
+  // State
+  let current=1, answersMap={}, marked=0;
+
+  function showQuestion(n){
+    document.querySelectorAll('.question').forEach(el=>el.style.display='none');
+    const el=document.getElementById('q'+n);
+    if(el) el.style.display='block';
+    current=n;
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function updateStatus(){
+    const attempted=Object.keys(answersMap).length;
+    const notAttempted=questions.length-attempted;
+    document.getElementById('status').innerText=
+      `प्रयत्नाः : ${toSanskritNum(attempted)} | अनुत्तरितः : ${toSanskritNum(notAttempted)}`;
+  }
+
+  function selectOption(qNum,el){
+    document.querySelectorAll(`#q${qNum} .opt`).forEach(o=>o.classList.remove('selected'));
+    el.classList.add('selected');
+    answersMap[qNum]=el.innerText.trim();
+    if(el.innerText.trim()===questions[qNum-1].options[questions[qNum-1].answer]){
+      triggerCongrats();
     }
+    updateStatus();
+  }
 
-    function updateStatus(){
-      const attempted = Object.keys(answersMap).length;
-      const notAttempted = questions.length - attempted;
-      document.getElementById('status').innerText = `प्रयत्नाः: ${attempted} | अनुत्तरितः: ${notAttempted} | पुनर्द्रष्टव्यः: ${marked}`;
-    }
+  function prevQuestion(){if(current>1)showQuestion(current-1);}
+  function nextQuestion(){if(current<questions.length)showQuestion(current+1);}
+ 
 
-    function selectOption(qNum, el){
-      // mark selected (visual)
-      const opts = document.querySelectorAll(`#q${qNum} .opt`);
-      opts.forEach(o=>o.classList.remove('selected'));
-      el.classList.add('selected');
-      // save answer
-      answersMap[qNum] = el.innerText.trim();
-
-      // check correctness: find correct option text for that question
-      const q = questions[qNum-1];
-      const correctText = q.options[q.answer];
-
-      if(el.innerText.trim() === correctText){
-        triggerCongrats();
-      }
-      updateStatus();
-    }
-
-    function prevQuestion(){ if(current>1){ showQuestion(current-1); } }
-    function nextQuestion(){ if(current<questions.length){ showQuestion(current+1); } }
-
-    function markReview(){
-      marked++;
-      updateStatus();
-      // visually indicate on current question (small mark)
-      const el = document.getElementById('q'+current);
-      if(el && !el.querySelector('.marked')) {
-        const m = document.createElement('div');
-        m.className = 'meta marked';
-        m.style.marginTop='8px';
-        m.style.fontWeight='700';
-        m.innerText = '🔖 पुनर्द्रष्टव्यः';
-        el.appendChild(m);
-      }
-    }
-
-    // congrats popup + floating flowers (one-time small shower each correct selection)
+  // congrats popup + floating flowers (one-time small shower each correct selection)
     function triggerCongrats(){
       const popup = document.getElementById('congrats');
       popup.classList.add('show');
@@ -202,40 +194,28 @@
       }
     }
 
-    // finish exam -> show results
-    function finishExam(){
-      let correctCount = 0;
-      let html = '';
-      for(let i=0;i<questions.length;i++){
-        const qNum = i+1;
-        const q = questions[i];
-        const correctValue = q.options[q.answer];
-        const studentValue = answersMap[qNum] || null;
-        const isCorrect = studentValue !== null && studentValue === correctValue;
-        if(isCorrect) correctCount++;
-        const symbol = isCorrect ? '✅' : '❌';
-        const cls = isCorrect ? 'right' : 'wrong';
-
-        html += `<div class="answer-block">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div><strong>Q${qNum}.</strong> ${q.text}</div>
-            <div style="font-size:18px">${symbol}</div>
-          </div>
-          <p>दत्त उत्तर: <span class="${cls}">${studentValue ? studentValue + ' ' + symbol : 'न दत्त'}</span></p>
-          <p>समीचीन उत्तर: <strong>${correctValue}</strong></p>
-          <p style="color:#555">विकल्पाः: ${q.options.join(' , ')}</p>
-        </div>`;
-      }
-      const summary = `<div class="summary" style="padding:8px 0;font-weight:800">योगफल: योग्य: ${correctCount} / ${questions.length} — प्रयत्नाः: ${Object.keys(answersMap).length} — अनुत्तरितः: ${questions.length - Object.keys(answersMap).length}</div>`;
-      document.getElementById('answers').innerHTML = summary + html;
-      document.getElementById('quiz').style.display = 'none';
-      document.getElementById('results').style.display = 'block';
-      window.scrollTo({top:0,behavior:'smooth'});
+  function finishExam(){
+    let correctCount=0,html='';
+    for(let i=0;i<questions.length;i++){
+      const qNum=i+1,q=questions[i],correct=q.options[q.answer];
+      const given=answersMap[qNum]||null;
+      const ok=given!==null && given===correct;
+      if(ok)correctCount++;
+      html+=`<div class="answer-block">
+        <div><strong>प्रश्नः ${toSanskritNum(qNum)}.</strong> ${q.text}</div>
+        <p>दत्त उत्तरः: <span class="${ok?'right':'wrong'}">${given||'न दत्त'}</span></p>
+        <p>समीचीन उत्तरः: <strong>${correct}</strong></p>
+      </div>`;
     }
+    const summary=`<div class="summary">योगफलम् : ${toSanskritNum(correctCount)} / ${toSanskritNum(questions.length)}</div>`;
+    document.getElementById('answers').innerHTML=summary+html;
+    document.getElementById('quiz').style.display='none';
+    document.getElementById('results').style.display='block';
+  }
 
-    // initialize
-    showQuestion(1);
-    updateStatus();
+  showQuestion(1);
+  updateStatus();
   </script>
 </body>
 </html>
+
