@@ -8,7 +8,7 @@
     :root{--orange:#d35400;--soft:#fff3e0;--btn:#e67e22}
     body{margin:0;font-family:"Noto Sans Devanagari",sans-serif;background:orange;color:#222}
     header{background:var(--orange);color:#fff;padding:6px 8px;text-align:center}
-    h1{margin:0;font-size:16px;animation:glow 6s infinite}
+    h1{margin:0;font-size:22px;animation:glow 6s infinite}
     @keyframes glow{
       0%{color:#fff;text-shadow:0 0 8px crimson}
       25%{color:#ffeb3b;text-shadow:0 0 10px green}
@@ -26,7 +26,7 @@
     .opt:hover{transform:scale(1.02);background:#f5b041}
     .opt.selected{background:#d35400;color:#fff;font-weight:700}
     .controls{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10px}
-    .controls button{background:var(--btn);color:#fff;border:none;padding:2px 10px;border-radius:10px;cursor:pointer}
+    .controls button{background:var(--btn);color:#fff;border:none;padding:2px 20px;border-radius:10px;cursor:pointer}
     .controls button:hover{filter:brightness(.95)}
     .status{margin:10px auto;text-align:center;font-weight:700}
     #results{display:none;margin-top:16px}
@@ -40,25 +40,25 @@
     @keyframes fall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(360deg);opacity:0}}
     .meta{font-size:13px;color:#333;margin-top:6px}
   </style>
+
 </head>
 <body>
   <header>
     <h1>जयतु भारतम् &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;।।🌼🌼 योऽनूचानः स नो महान्  🌼🌼 ।।&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;जयतु संस्कृतम्</h1>
     <h2></h2>
-  </header>
+   </header>
 
   <div class="wrap">
     <div id="quiz"></div>
 
     <div class="controls" style="margin-top:16px">
-      <button onclick="prevQuestion()">पुर्वप्रश्नः</button>
-      <button onclick="nextQuestion()">परप्रश्नः</button>
-      <button onclick="markReview()">पुनर्द्रष्टव्यः</button>
+      <button onclick="prevQuestion()">⬅️ पुर्वप्रश्नः </button>
+      <button onclick="nextQuestion()">परप्रश्नः ➡️</button>
+    
       <button onclick="finishExam()">समाप्तिः</button>
     </div>
 
-    <div class="status" id="status">प्रयत्नाः : ० | अनुत्तरितः : ० | पुनर्द्रष्टव्यः : ०</div>
-
+    <div class="status" id="status">प्रयत्नाः : ० | अनुत्तरितः : ०</div>
     <div id="results">
       <h3>भवतः उत्तराणि</h3>
       <div id="answers"></div>
@@ -211,7 +211,7 @@
     const attempted=Object.keys(answersMap).length;
     const notAttempted=questions.length-attempted;
     document.getElementById('status').innerText=
-      `प्रयत्नाः : ${toSanskritNum(attempted)} | अनुत्तरितः : ${toSanskritNum(notAttempted)} | पुनर्द्रष्टव्यः : ${toSanskritNum(marked)}`;
+      `प्रयत्नाः : ${toSanskritNum(attempted)} | अनुत्तरितः : ${toSanskritNum(notAttempted)}`;
   }
 
   function selectOption(qNum,el){
@@ -226,7 +226,7 @@
 
   function prevQuestion(){if(current>1)showQuestion(current-1);}
   function nextQuestion(){if(current<questions.length)showQuestion(current+1);}
-  function markReview(){marked++;updateStatus();}
+
 
   // congrats popup + floating flowers (one-time small shower each correct selection)
     function triggerCongrats(){
